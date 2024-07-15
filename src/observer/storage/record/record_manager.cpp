@@ -445,7 +445,13 @@ RC PaxRecordPageHandler::insert_record(const char *data, RID *rid)
   int column_num = page_header_->column_num;
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for (int i = 0; i < column_num; ++i) {
-    int col_len = (column_index[i + 1] - column_index[i]) / page_header_->record_capacity;
+    int col_len = 0;
+    if(i == 0) {
+      col_len = (column_index[i] - page_header_->data_offset) / page_header_->record_capacity;
+    } else {
+      col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
+    }
+    // int col_len = (column_index[i + 1] - column_index[i]) / page_header_->record_capacity;
     char *record_col_data = frame_->data() + page_header_->data_offset + col_len * (page_header_->record_num - 1) + prev_cols_len;
     memcpy(record_col_data, data + idx, col_len);
     idx += col_len;
@@ -509,7 +515,12 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
   int column_num = page_header_->column_num;
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for (int i = 0; i < column_num; ++i) {
-    int col_len = (column_index[i + 1] - column_index[i]) / page_header_->record_capacity;
+    int col_len = 0;
+    if(i == 0) {
+      col_len = (column_index[i] - page_header_->data_offset) / page_header_->record_capacity;
+    } else {
+      col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
+    }
     char *record_col_data = frame_->data() + page_header_->data_offset + i * col_len + prev_cols_len;
     record.set_field(prev_cols_len, col_len, record_col_data);
     // memcpy(record_data + prev_cols_len, record_col_data, page_header_->record_real_size);
@@ -525,7 +536,12 @@ RC PaxRecordPageHandler::get_chunk(Chunk &chunk)
   int column_num = page_header_->column_num;
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for (int i = 0; i < column_num; ++i) {
-    int col_len = (column_index[i + 1] - column_index[i]) / page_header_->record_capacity;
+    int col_len = 0;
+    if(i == 0) {
+      col_len = (column_index[i] - page_header_->data_offset) / page_header_->record_capacity;
+    } else {
+      col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
+    }
     // Column c(AttrType::UNDEFINED, col_len, page_header_->record_num);
     chunk.add_column(std::make_unique<Column>(AttrType::UNDEFINED, col_len, page_header_->record_num), i);
   }
