@@ -504,18 +504,18 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
 
   record.set_rid(rid);
 
-  char* record_data = (char *)malloc(page_header_->record_real_size);
+  // char* record_data = (char *)malloc(page_header_->record_real_size);
   int prev_cols_len = 0;
   int column_num = page_header_->column_num;
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for (int i = 0; i < column_num; ++i) {
     int col_len = (column_index[i + 1] - column_index[i]) / page_header_->record_capacity;
     char *record_col_data = frame_->data() + page_header_->data_offset + i * col_len + prev_cols_len;
-    memcpy(record_data + prev_cols_len, record_col_data, page_header_->record_real_size);
+    record.set_field(prev_cols_len, col_len, record_col_data);
+    // memcpy(record_data + prev_cols_len, record_col_data, page_header_->record_real_size);
     prev_cols_len += page_header_->record_capacity * col_len;
   }
 
-  record.set_data(record_data, page_header_->record_real_size);
   return RC::SUCCESS;
 }
 
