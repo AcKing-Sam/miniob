@@ -320,7 +320,7 @@ public:
    *
    * @param data 要插入的记录
    * @param rid  如果插入成功，通过这个参数返回插入的位置
-   * 注意：需要将record 按列拆分，在 Page 内按 PAX 格式存储。
+   * 注意：需要将 record 按列拆分，在 Page 内按 PAX 格式存储。
    */
   virtual RC insert_record(const char *data, RID *rid) override;
 
