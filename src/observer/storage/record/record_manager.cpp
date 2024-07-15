@@ -523,8 +523,8 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
     } else {
       col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
     }
-    char *record_col_data = frame_->data() + page_header_->data_offset + prev_cols_len + col_len * rid.slot_num;
-    record.set_field(prev_cols_len / page_header_->record_capacity, col_len, record_col_data);
+    // char *record_col_data = frame_->data() + page_header_->data_offset + prev_cols_len + col_len * rid.slot_num;
+    record.set_field(prev_cols_len / page_header_->record_capacity, col_len, get_field_data(rid.slot_num, i));
     prev_cols_len += page_header_->record_capacity * col_len;
   }
 
