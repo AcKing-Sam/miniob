@@ -100,8 +100,23 @@ void AggregateVecPhysicalOperator::update_aggregate_state(void *state, const Col
 
 RC AggregateVecPhysicalOperator::next(Chunk &chunk)
 {
-  // your code here
-  exit(-1);
+  for (size_t aggr_idx = 0; aggr_idx < aggregate_expressions_.size(); aggr_idx++) {
+    auto *aggregate_expr = static_cast<AggregateExpr *>(aggregate_expressions_[aggr_idx]);
+    if (aggregate_expr->aggregate_type() == AggregateExpr::Type::SUM) {
+      if (aggregate_expr->value_type() == AttrType::INTS) {
+        // update_aggregate_state<SumState<int>, int>(aggr_values_.at(aggr_idx), column);
+        output_chunk_.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
+      } else if (aggregate_expr->value_type() == AttrType::FLOATS) {
+        // update_aggregate_state<SumState<float>, float>(aggr_values_.at(aggr_idx), column);
+        output_chunk_.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
+      } else {
+        ASSERT(false, "not supported value type");
+      }
+    } else {
+      ASSERT(false, "not supported aggregation type");
+    }
+  }
+  return RC::SUCCESS;
 }
 
 RC AggregateVecPhysicalOperator::close()
