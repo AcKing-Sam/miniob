@@ -539,14 +539,21 @@ RC PaxRecordPageHandler::get_chunk(Chunk &chunk)
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for(int i = 0;i < chunk.column_num();i ++) {
     int idx = chunk.column_ids(i);
-    if(bitmap.get_bit(idx)) {
-      auto col = chunk.column_ptr(i);
-      if(idx == 0) {
-        col->append(frame_->data() + page_header_->data_offset, page_header_->record_num);
-      } else {
-        col->append(frame_->data() + page_header_->data_offset + column_index[idx - 1], page_header_->record_num);
-      } 
-    }
+    auto col = chunk.column_ptr(i);
+    int col_len = get_field_len(idx);
+    if(idx == 0) {
+      for(int j = 0;j < page_header_->record_num;j ++) {
+        if(bitmap.get_bit(j)) {
+          col->append_one(frame_->data() + page_header_->data_offset + j * col_len);
+        }
+      }
+    } else {
+      for(int j = 0;j < page_header_->record_num;j ++) {
+        if(bitmap.get_bit(j)) {
+          col->append_one(frame_->data() + page_header_->data_offset + column_index[idx - 1] + j * col_len);
+        }
+      }
+    } 
   }
   return RC::SUCCESS;
 }
