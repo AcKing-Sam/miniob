@@ -554,7 +554,7 @@ RC PaxRecordPageHandler::get_chunk(Chunk &chunk)
       int next_off = 0;
       for(int j = 0;j < page_header_->record_num;j ++) {
         if(bitmap.get_bit(j)) {
-          col->append_one(frame_->data() + page_header_->data_offset + column_index[idx - 1] + j * col_len);
+          col->append_one(frame_->data() + page_header_->data_offset + column_index[idx - 1] + next_off);
           next_off += col_len;
         }
       }
