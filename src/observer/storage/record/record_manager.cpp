@@ -543,13 +543,13 @@ RC PaxRecordPageHandler::get_chunk(Chunk &chunk)
     int col_len = get_field_len(idx);
     
     if(idx == 0) {
-      for(int j = 0;j < page_header_->record_num;j ++) {
+      for(int j = 0;j < page_header_->record_capacity;j ++) {
         if(bitmap.get_bit(j)) {
           col->append_one(get_field_data(j, idx));
         }
       }
     } else {
-      for(int j = 0;j < page_header_->record_num;j ++) {
+      for(int j = 0;j < page_header_->record_capacity;j ++) {
         if(bitmap.get_bit(j)) {
           col->append_one(get_field_data(j, idx));
         }
