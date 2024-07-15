@@ -447,13 +447,14 @@ RC PaxRecordPageHandler::insert_record(const char *data, RID *rid)
   for (int i = 0; i < column_num; ++i) {
     int col_len = 0;
     if(i == 0) {
-      col_len = (column_index[i] - page_header_->data_offset) / page_header_->record_capacity;
+      col_len = column_index[i] / page_header_->record_capacity;
     } else {
       col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
     }
     // int col_len = (column_index[i + 1] - column_index[i]) / page_header_->record_capacity;
     char *record_col_data = frame_->data() + page_header_->data_offset + col_len * index + prev_cols_len;
     memcpy(record_col_data, data + idx, col_len);
+    // std::cout << *(int*)(data + idx) << std::endl;
     idx += col_len;
     prev_cols_len += page_header_->record_capacity * col_len;
   }
@@ -511,19 +512,23 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
   record.set_rid(rid);
 
   // char* record_data = (char *)malloc(page_header_->record_real_size);
-  record.set_data_owner((char *)malloc(page_header_->record_real_size), page_header_->record_real_size);
+  auto rc = record.new_record(page_header_->record_size);
+  (void)rc;
+  // record.set_data_owner((char *)malloc(page_header_->record_size), page_header_->record_size);
+
   int prev_cols_len = 0;
   int column_num = page_header_->column_num;
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for (int i = 0; i < column_num; ++i) {
     int col_len = 0;
     if(i == 0) {
-      col_len = (column_index[i] - page_header_->data_offset) / page_header_->record_capacity;
+      col_len = column_index[i] / page_header_->record_capacity;
     } else {
       col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
     }
-    char *record_col_data = frame_->data() + page_header_->data_offset + prev_cols_len;
-    record.set_field(i, col_len, record_col_data);
+    char *record_col_data = frame_->data() + page_header_->data_offset + prev_cols_len + col_len * rid.slot_num;
+    record.set_field(i * col_len / sizeof(char), col_len, record_col_data);
+    // std::cout << *(int*)record_col_data << std::endl;
     // memcpy(record_data + prev_cols_len, record_col_data, page_header_->record_real_size);
     prev_cols_len += page_header_->record_capacity * col_len;
   }
@@ -539,7 +544,7 @@ RC PaxRecordPageHandler::get_chunk(Chunk &chunk)
   for (int i = 0; i < column_num; ++i) {
     int col_len = 0;
     if(i == 0) {
-      col_len = (column_index[i] - page_header_->data_offset) / page_header_->record_capacity;
+      col_len = column_index[i] / page_header_->record_capacity;
     } else {
       col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
     }

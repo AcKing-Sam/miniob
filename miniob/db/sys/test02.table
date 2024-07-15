@@ -1,0 +1,17 @@
+{
+	"fields" : 
+	[
+		{
+			"FIELD_id" : 0,
+			"len" : 4,
+			"name" : "col1",
+			"offset" : 0,
+			"type" : "floats",
+			"visible" : true
+		}
+	],
+	"indexes" : null,
+	"storage_format" : 2,
+	"table_id" : 1,
+	"table_name" : "test02"
+}
