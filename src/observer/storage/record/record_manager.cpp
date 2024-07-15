@@ -511,10 +511,8 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
 
   record.set_rid(rid);
 
-  // char* record_data = (char *)malloc(page_header_->record_real_size);
   auto rc = record.new_record(page_header_->record_size);
   (void)rc;
-  // record.set_data_owner((char *)malloc(page_header_->record_size), page_header_->record_size);
 
   int prev_cols_len = 0;
   int column_num = page_header_->column_num;
@@ -528,8 +526,6 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
     }
     char *record_col_data = frame_->data() + page_header_->data_offset + prev_cols_len + col_len * rid.slot_num;
     record.set_field(prev_cols_len / page_header_->record_capacity, col_len, record_col_data);
-    // std::cout << *(int*)record_col_data << std::endl;
-    // memcpy(record_data + prev_cols_len, record_col_data, page_header_->record_real_size);
     prev_cols_len += page_header_->record_capacity * col_len;
   }
 
@@ -546,7 +542,7 @@ RC PaxRecordPageHandler::get_chunk(Chunk &chunk)
     if(idx == 0) {
       col->append(frame_->data() + page_header_->data_offset, page_header_->record_num);
     } else {
-      col->append(frame_->data() + column_index[idx - 1], page_header_->record_num);
+      col->append(frame_->data() + page_header_->data_offset + column_index[idx - 1], page_header_->record_num);
     } 
   }
   return RC::SUCCESS;
