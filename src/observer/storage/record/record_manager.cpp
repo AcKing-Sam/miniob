@@ -446,8 +446,8 @@ RC PaxRecordPageHandler::insert_record(const char *data, RID *rid)
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for (int i = 0; i < column_num; ++i) {
     int col_len = (column_index[i + 1] - column_index[i]) / page_header_->record_capacity;
-    char *record_col_data = frame_->data() + page_header_->data_offset + i * col_len + prev_cols_len;
-    memcpy(record_col_data, data + idx, page_header_->record_real_size);
+    char *record_col_data = frame_->data() + page_header_->data_offset + col_len * (page_header_->record_num - 1) + prev_cols_len;
+    memcpy(record_col_data, data + idx, col_len);
     idx += col_len;
     prev_cols_len += page_header_->record_capacity * col_len;
   }
