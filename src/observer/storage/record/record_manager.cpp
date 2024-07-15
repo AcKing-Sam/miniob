@@ -511,6 +511,7 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
   record.set_rid(rid);
 
   // char* record_data = (char *)malloc(page_header_->record_real_size);
+  record.set_data_owner((char *)malloc(page_header_->record_real_size), page_header_->record_real_size);
   int prev_cols_len = 0;
   int column_num = page_header_->column_num;
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
