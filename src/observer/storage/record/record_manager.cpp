@@ -527,7 +527,7 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
       col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
     }
     char *record_col_data = frame_->data() + page_header_->data_offset + prev_cols_len + col_len * rid.slot_num;
-    record.set_field(i * col_len / sizeof(char), col_len, record_col_data);
+    record.set_field(prev_cols_len / page_header_->record_capacity, col_len, record_col_data);
     // std::cout << *(int*)record_col_data << std::endl;
     // memcpy(record_data + prev_cols_len, record_col_data, page_header_->record_real_size);
     prev_cols_len += page_header_->record_capacity * col_len;

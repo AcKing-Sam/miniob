@@ -1319,3 +1319,114 @@ Finish dump configuration
 [2024-07-15 17:33:33.098831 pid:58582 tid:202bc6080 ctx:0 INFO: ~Db@db.cpp:47] >> Db has been closed: sys
 [2024-07-15 17:33:33.161102 pid:58582 tid:202bc6080 ctx:0 INFO: cleanup@mem_pool.h:217] >> Successfully do cleanup, this->name:BufPool.
 [2024-07-15 17:33:33.161203 pid:58582 tid:202bc6080 ctx:0 INFO: cleanup_util@init.cpp:229] >> Shutdown Cleanly!
+[2024-07-15 17:39:18.808120 pid:59168 tid:202bc6080 ctx:0 INFO: init@init.cpp:200] >> Output configuration 
+Begin dump configuration
+[]
+
+Finish dump configuration 
+
+[2024-07-15 17:39:18.809472 pid:59168 tid:202bc6080 ctx:0 WARN: create_db@default_handler.cpp:93] >> Db already exists: sys
+[2024-07-15 17:39:18.809826 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:128, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.810002 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:256, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.810150 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:384, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.810301 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:512, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.810454 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:640, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.810605 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:768, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.810753 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:896, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.810895 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:1024, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.811042 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:1152, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.811192 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:1280, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.811344 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:1408, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.811492 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:1536, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.811641 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:1664, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.811785 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:1792, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.811927 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:1920, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.812074 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:2048, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.812218 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:2176, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.812371 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:2304, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.812515 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:2432, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.812654 pid:59168 tid:202bc6080 ctx:0 INFO: extend@mem_pool.h:245] >> Extend one pool, this->size:2560, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.812662 pid:59168 tid:202bc6080 ctx:0 INFO: init@mem_pool.h:192] >> Extend one pool, this->size:2560, item_num_per_pool:128, this->name:BufPool.
+[2024-07-15 17:39:18.812669 pid:59168 tid:202bc6080 ctx:0 INFO: BufferPoolManager@disk_buffer_pool.cpp:772] >> buffer pool manager init with memory size 20971520, page num: 2560, pool num: 20
+[2024-07-15 17:39:18.814685 pid:59168 tid:202bc6080 ctx:0 INFO: load_pages@double_write_buffer.cpp:283] >> double write buffer load pages done. page num=10
+[2024-07-15 17:39:18.814938 pid:59168 tid:202bc6080 ctx:0 INFO: init_meta@db.cpp:335] >> Successfully read db meta file. db=sys, file=miniob/db/sys/sys.db, check_point_lsn=0
+[2024-07-15 17:39:18.815898 pid:59168 tid:202bc6080 ctx:0 INFO: init@field_meta.cpp:57] >> Init a field with name=c1
+[2024-07-15 17:39:18.815912 pid:59168 tid:202bc6080 ctx:0 INFO: init@field_meta.cpp:57] >> Init a field with name=c2
+[2024-07-15 17:39:18.816117 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:234] >> Successfully open buffer pool file miniob/db/sys/t1.data.
+[2024-07-15 17:39:18.816420 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:273] >> Successfully open miniob/db/sys/t1.data. file_desc=5, hdr_frame=0x109504810, file header=pageCount:2, allocatedCount:2
+[2024-07-15 17:39:18.816600 pid:59168 tid:202bc6080 ctx:0 INFO: init_free_pages@record_manager.cpp:635] >> record file handler init free pages done. free page num=1, rc=SUCCESS
+[2024-07-15 17:39:18.816612 pid:59168 tid:202bc6080 ctx:0 INFO: init@record_manager.cpp:594] >> open record file handle done. rc=SUCCESS
+[2024-07-15 17:39:18.816642 pid:59168 tid:202bc6080 ctx:0 INFO: open_all_tables@db.cpp:214] >> Open table: t1, file: t1.table
+[2024-07-15 17:39:18.816857 pid:59168 tid:202bc6080 ctx:0 INFO: init@field_meta.cpp:57] >> Init a field with name=col1
+[2024-07-15 17:39:18.816868 pid:59168 tid:202bc6080 ctx:0 INFO: init@field_meta.cpp:57] >> Init a field with name=col2
+[2024-07-15 17:39:18.816927 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:234] >> Successfully open buffer pool file miniob/db/sys/test04.data.
+[2024-07-15 17:39:18.817155 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:273] >> Successfully open miniob/db/sys/test04.data. file_desc=6, hdr_frame=0x109508940, file header=pageCount:2, allocatedCount:2
+[2024-07-15 17:39:18.817192 pid:59168 tid:202bc6080 ctx:0 INFO: init_free_pages@record_manager.cpp:635] >> record file handler init free pages done. free page num=1, rc=SUCCESS
+[2024-07-15 17:39:18.817203 pid:59168 tid:202bc6080 ctx:0 INFO: init@record_manager.cpp:594] >> open record file handle done. rc=SUCCESS
+[2024-07-15 17:39:18.817214 pid:59168 tid:202bc6080 ctx:0 INFO: open_all_tables@db.cpp:214] >> Open table: test04, file: test04.table
+[2024-07-15 17:39:18.817389 pid:59168 tid:202bc6080 ctx:0 INFO: init@field_meta.cpp:57] >> Init a field with name=col1
+[2024-07-15 17:39:18.817445 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:234] >> Successfully open buffer pool file miniob/db/sys/test02.data.
+[2024-07-15 17:39:18.817591 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:273] >> Successfully open miniob/db/sys/test02.data. file_desc=7, hdr_frame=0x10950ca70, file header=pageCount:2, allocatedCount:2
+[2024-07-15 17:39:18.817626 pid:59168 tid:202bc6080 ctx:0 INFO: init_free_pages@record_manager.cpp:635] >> record file handler init free pages done. free page num=1, rc=SUCCESS
+[2024-07-15 17:39:18.817638 pid:59168 tid:202bc6080 ctx:0 INFO: init@record_manager.cpp:594] >> open record file handle done. rc=SUCCESS
+[2024-07-15 17:39:18.817648 pid:59168 tid:202bc6080 ctx:0 INFO: open_all_tables@db.cpp:214] >> Open table: test02, file: test02.table
+[2024-07-15 17:39:18.817830 pid:59168 tid:202bc6080 ctx:0 INFO: init@field_meta.cpp:57] >> Init a field with name=col1
+[2024-07-15 17:39:18.817840 pid:59168 tid:202bc6080 ctx:0 INFO: init@field_meta.cpp:57] >> Init a field with name=col2
+[2024-07-15 17:39:18.817898 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:234] >> Successfully open buffer pool file miniob/db/sys/test03.data.
+[2024-07-15 17:39:18.818027 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:273] >> Successfully open miniob/db/sys/test03.data. file_desc=8, hdr_frame=0x109510ba0, file header=pageCount:2, allocatedCount:2
+[2024-07-15 17:39:18.818085 pid:59168 tid:202bc6080 ctx:0 INFO: init_free_pages@record_manager.cpp:635] >> record file handler init free pages done. free page num=1, rc=SUCCESS
+[2024-07-15 17:39:18.818107 pid:59168 tid:202bc6080 ctx:0 INFO: init@record_manager.cpp:594] >> open record file handle done. rc=SUCCESS
+[2024-07-15 17:39:18.818121 pid:59168 tid:202bc6080 ctx:0 INFO: open_all_tables@db.cpp:214] >> Open table: test03, file: test03.table
+[2024-07-15 17:39:18.818307 pid:59168 tid:202bc6080 ctx:0 INFO: init@field_meta.cpp:57] >> Init a field with name=col1
+[2024-07-15 17:39:18.818362 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:234] >> Successfully open buffer pool file miniob/db/sys/test01.data.
+[2024-07-15 17:39:18.818511 pid:59168 tid:202bc6080 ctx:0 INFO: open_file@disk_buffer_pool.cpp:273] >> Successfully open miniob/db/sys/test01.data. file_desc=9, hdr_frame=0x109514cd0, file header=pageCount:2, allocatedCount:2
+[2024-07-15 17:39:18.818534 pid:59168 tid:202bc6080 ctx:0 INFO: init_free_pages@record_manager.cpp:635] >> record file handler init free pages done. free page num=1, rc=SUCCESS
+[2024-07-15 17:39:18.818555 pid:59168 tid:202bc6080 ctx:0 INFO: init@record_manager.cpp:594] >> open record file handle done. rc=SUCCESS
+[2024-07-15 17:39:18.818566 pid:59168 tid:202bc6080 ctx:0 INFO: open_all_tables@db.cpp:214] >> Open table: test01, file: test01.table
+[2024-07-15 17:39:18.818574 pid:59168 tid:202bc6080 ctx:0 INFO: open_all_tables@db.cpp:217] >> All table have been opened. num=5
+[2024-07-15 17:39:18.868539 pid:59168 tid:202bc6080 ctx:0 INFO: recover@db.cpp:298] >> Successfully recover db. db=sys checkpoint_lsn=0
+[2024-07-15 17:39:18.868612 pid:59168 tid:202bc6080 ctx:0 INFO: init@default_handler.cpp:69] >> Default handler init with miniob success
+[2024-07-15 17:39:18.868630 pid:59168 tid:202bc6080 ctx:0 INFO: init@init.cpp:215] >> Successfully init utility
+[2024-07-15 17:39:21.693006 pid:59168 tid:202bc6080 ctx:108321e80 INFO: generate_physical_plan@optimize_stage.cpp:85] >> use tuple iterator
+[2024-07-15 17:39:21.693983 pid:59168 tid:202bc6080 ctx:108321e80 INFO: handle_event@sql_task_handler.cpp:46] >> write result return SUCCESS
+[2024-07-15 17:39:27.988300 pid:59168 tid:202bc6080 ctx:108321e80 INFO: generate_physical_plan@optimize_stage.cpp:85] >> use tuple iterator
+[2024-07-15 17:39:27.988693 pid:59168 tid:202bc6080 ctx:108321e80 INFO: handle_event@sql_task_handler.cpp:46] >> write result return SUCCESS
+[2024-07-15 17:39:30.105549 pid:59168 tid:202bc6080 ctx:108321e80 INFO: generate_physical_plan@optimize_stage.cpp:85] >> use tuple iterator
+[2024-07-15 17:39:30.106185 pid:59168 tid:202bc6080 ctx:108321e80 INFO: handle_event@sql_task_handler.cpp:46] >> write result return SUCCESS
+[2024-07-15 17:39:33.789823 pid:59168 tid:202bc6080 ctx:0 INFO: main@main.cpp:200] >> Server stopped
+[2024-07-15 17:39:33.790565 pid:59168 tid:202bc6080 ctx:0 INFO: sync@table.cpp:526] >> Sync table over. table=test01
+[2024-07-15 17:39:33.790628 pid:59168 tid:202bc6080 ctx:0 INFO: sync@db.cpp:241] >> Successfully sync table db:sys, table:test01.
+[2024-07-15 17:39:33.790906 pid:59168 tid:202bc6080 ctx:0 INFO: sync@table.cpp:526] >> Sync table over. table=test03
+[2024-07-15 17:39:33.790936 pid:59168 tid:202bc6080 ctx:0 INFO: sync@db.cpp:241] >> Successfully sync table db:sys, table:test03.
+[2024-07-15 17:39:33.791181 pid:59168 tid:202bc6080 ctx:0 INFO: sync@table.cpp:526] >> Sync table over. table=test04
+[2024-07-15 17:39:33.791204 pid:59168 tid:202bc6080 ctx:0 INFO: sync@db.cpp:241] >> Successfully sync table db:sys, table:test04.
+[2024-07-15 17:39:33.791446 pid:59168 tid:202bc6080 ctx:0 INFO: sync@table.cpp:526] >> Sync table over. table=test02
+[2024-07-15 17:39:33.791468 pid:59168 tid:202bc6080 ctx:0 INFO: sync@db.cpp:241] >> Successfully sync table db:sys, table:test02.
+[2024-07-15 17:39:33.791698 pid:59168 tid:202bc6080 ctx:0 INFO: sync@table.cpp:526] >> Sync table over. table=t1
+[2024-07-15 17:39:33.791766 pid:59168 tid:202bc6080 ctx:0 INFO: sync@db.cpp:241] >> Successfully sync table db:sys, table:t1.
+[2024-07-15 17:39:33.856847 pid:59168 tid:202bc6080 ctx:0 INFO: sync@db.cpp:246] >> double write buffer flush pages ret=SUCCESS
+[2024-07-15 17:39:33.857730 pid:59168 tid:202bc6080 ctx:0 INFO: flush_meta@db.cpp:380] >> Successfully write db meta file. db=sys, file=miniob/db/sys/sys.db.tmp, check_point_lsn=0
+[2024-07-15 17:39:33.857755 pid:59168 tid:202bc6080 ctx:0 INFO: sync@db.cpp:265] >> Successfully sync db. db=sys
+[2024-07-15 17:39:33.857902 pid:59168 tid:202bc6080 ctx:0 INFO: clear_pages@double_write_buffer.cpp:209] >> clear pages in double write buffer. file name=miniob/db/sys/test01.data, page count=0
+[2024-07-15 17:39:33.857980 pid:59168 tid:202bc6080 ctx:0 INFO: close_file@disk_buffer_pool.cpp:305] >> Successfully close file 9:miniob/db/sys/test01.data.
+[2024-07-15 17:39:33.858016 pid:59168 tid:202bc6080 ctx:0 INFO: ~DiskBufferPool@disk_buffer_pool.cpp:224] >> disk buffer pool exit
+[2024-07-15 17:39:33.858032 pid:59168 tid:202bc6080 ctx:0 INFO: ~Table@table.cpp:52] >> Table has been closed: test01
+[2024-07-15 17:39:33.858063 pid:59168 tid:202bc6080 ctx:0 INFO: clear_pages@double_write_buffer.cpp:209] >> clear pages in double write buffer. file name=miniob/db/sys/test03.data, page count=0
+[2024-07-15 17:39:33.858098 pid:59168 tid:202bc6080 ctx:0 INFO: close_file@disk_buffer_pool.cpp:305] >> Successfully close file 8:miniob/db/sys/test03.data.
+[2024-07-15 17:39:33.858118 pid:59168 tid:202bc6080 ctx:0 INFO: ~DiskBufferPool@disk_buffer_pool.cpp:224] >> disk buffer pool exit
+[2024-07-15 17:39:33.858127 pid:59168 tid:202bc6080 ctx:0 INFO: ~Table@table.cpp:52] >> Table has been closed: test03
+[2024-07-15 17:39:33.858152 pid:59168 tid:202bc6080 ctx:0 INFO: clear_pages@double_write_buffer.cpp:209] >> clear pages in double write buffer. file name=miniob/db/sys/test04.data, page count=0
+[2024-07-15 17:39:33.858185 pid:59168 tid:202bc6080 ctx:0 INFO: close_file@disk_buffer_pool.cpp:305] >> Successfully close file 6:miniob/db/sys/test04.data.
+[2024-07-15 17:39:33.858197 pid:59168 tid:202bc6080 ctx:0 INFO: ~DiskBufferPool@disk_buffer_pool.cpp:224] >> disk buffer pool exit
+[2024-07-15 17:39:33.858206 pid:59168 tid:202bc6080 ctx:0 INFO: ~Table@table.cpp:52] >> Table has been closed: test04
+[2024-07-15 17:39:33.858228 pid:59168 tid:202bc6080 ctx:0 INFO: clear_pages@double_write_buffer.cpp:209] >> clear pages in double write buffer. file name=miniob/db/sys/test02.data, page count=0
+[2024-07-15 17:39:33.858251 pid:59168 tid:202bc6080 ctx:0 INFO: close_file@disk_buffer_pool.cpp:305] >> Successfully close file 7:miniob/db/sys/test02.data.
+[2024-07-15 17:39:33.858266 pid:59168 tid:202bc6080 ctx:0 INFO: ~DiskBufferPool@disk_buffer_pool.cpp:224] >> disk buffer pool exit
+[2024-07-15 17:39:33.858275 pid:59168 tid:202bc6080 ctx:0 INFO: ~Table@table.cpp:52] >> Table has been closed: test02
+[2024-07-15 17:39:33.858295 pid:59168 tid:202bc6080 ctx:0 INFO: clear_pages@double_write_buffer.cpp:209] >> clear pages in double write buffer. file name=miniob/db/sys/t1.data, page count=0
+[2024-07-15 17:39:33.858318 pid:59168 tid:202bc6080 ctx:0 INFO: close_file@disk_buffer_pool.cpp:305] >> Successfully close file 5:miniob/db/sys/t1.data.
+[2024-07-15 17:39:33.858333 pid:59168 tid:202bc6080 ctx:0 INFO: ~DiskBufferPool@disk_buffer_pool.cpp:224] >> disk buffer pool exit
+[2024-07-15 17:39:33.858341 pid:59168 tid:202bc6080 ctx:0 INFO: ~Table@table.cpp:52] >> Table has been closed: t1
+[2024-07-15 17:39:33.858352 pid:59168 tid:202bc6080 ctx:0 INFO: ~Db@db.cpp:47] >> Db has been closed: sys
+[2024-07-15 17:39:33.922768 pid:59168 tid:202bc6080 ctx:0 INFO: cleanup@mem_pool.h:217] >> Successfully do cleanup, this->name:BufPool.
+[2024-07-15 17:39:33.922855 pid:59168 tid:202bc6080 ctx:0 INFO: cleanup_util@init.cpp:229] >> Shutdown Cleanly!
