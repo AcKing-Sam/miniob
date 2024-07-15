@@ -451,7 +451,6 @@ RC PaxRecordPageHandler::insert_record(const char *data, RID *rid)
     } else {
       col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
     }
-    // int col_len = (column_index[i + 1] - column_index[i]) / page_header_->record_capacity;
     char *record_col_data = frame_->data() + page_header_->data_offset + col_len * index + prev_cols_len;
     memcpy(record_col_data, data + idx, col_len);
     // std::cout << *(int*)(data + idx) << std::endl;
@@ -535,15 +534,19 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
 // TODO: specify the column_ids that chunk needed, currenly we get all columns.
 RC PaxRecordPageHandler::get_chunk(Chunk &chunk)
 {
+  Bitmap bitmap(bitmap_, page_header_->record_capacity);
+  
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for(int i = 0;i < chunk.column_num();i ++) {
     int idx = chunk.column_ids(i);
-    auto col = chunk.column_ptr(i);
-    if(idx == 0) {
-      col->append(frame_->data() + page_header_->data_offset, page_header_->record_num);
-    } else {
-      col->append(frame_->data() + page_header_->data_offset + column_index[idx - 1], page_header_->record_num);
-    } 
+    if(bitmap.get_bit(idx)) {
+      auto col = chunk.column_ptr(i);
+      if(idx == 0) {
+        col->append(frame_->data() + page_header_->data_offset, page_header_->record_num);
+      } else {
+        col->append(frame_->data() + page_header_->data_offset + column_index[idx - 1], page_header_->record_num);
+      } 
+    }
   }
   return RC::SUCCESS;
 }
