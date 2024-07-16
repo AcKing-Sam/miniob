@@ -277,7 +277,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       // Calculate hash values
       __m256i hash_vals = _mm256_setzero_si256();
       for (int j = 0; j < SIMD_WIDTH; ++j) {
-        int key = _mm256_extract_epi32(keys, j);
+        int key = mm256_extract_epi32_var_indx(keys, j);
         int hash_val = hash_function(key + off[j]);
         hash_vals = _mm256_insert_epi32(hash_vals, hash_val, j);
       }
@@ -287,17 +287,17 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
 
       // Update hash table
       for (int j = 0; j < SIMD_WIDTH; ++j) {
-          int key = _mm256_extract_epi32(keys, j);
-          int table_key = _mm256_extract_epi32(table_keys, j);
-          int hash_val = _mm256_extract_epi32(hash_vals, j);
+          int key = mm256_extract_epi32_var_indx(keys, j);
+          int table_key = mm256_extract_epi32_var_indx(table_keys, j);
+          int hash_val = mm256_extract_epi32_var_indx(hash_vals, j);
 
           if (table_key == key) {
-              values_[hash_val] += _mm256_extract_epi32(values, j);
+              values_[hash_val] += mm256_extract_epi32_var_indx(values, j);
               inv[j] = -1; // Mark as done
               off[j] = 0;
           } else if(table_key == EMPTY_KEY) {
               keys_[hash_val] = key;
-              values_[hash_val] = _mm256_extract_epi32(values, j);
+              values_[hash_val] = mm256_extract_epi32_var_indx(values, j);
               inv[j] = -1; // Mark as done
               off[j] = 0;
           } else {
