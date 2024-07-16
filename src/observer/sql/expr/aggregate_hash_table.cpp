@@ -269,6 +269,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
           if (inv[j] == -1 && i < len) {
               keys = _mm256_insert_epi32(keys, input_keys[i], j);
               values = _mm256_insert_epi32(values, input_values[i], j);
+              inv[j] = 0;
               ++i;
           }
       }
@@ -295,14 +296,13 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
               inv[j] = -1; // Mark as done
               off[j] = 0;
           } else if(table_key == EMPTY_KEY) {
+              keys_[hash_val] = key;
               values_[hash_val] = _mm256_extract_epi32(values, j);
               inv[j] = -1; // Mark as done
               off[j] = 0;
           } else {
               off[j]++;
-              inv[j] = 0;
           }
-          
       }
   }
 
