@@ -284,7 +284,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       // 3. Calculate hash values and update the hash table
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if (key[j] != -1) {
-              int index = hash(key[j]);
+              int index = hash_function(key[j]);
               while (keys_[index] != key[j] && inv_[index] != -1) {
                   index = (index + 1) % capacity_; // Linear probing
               }
@@ -314,7 +314,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   for (; i < len; ++i) {
       if (inv_[i] == -1) {
           int key_val = input_keys[i];
-          int index = hash(key_val);
+          int index = hash_function(key_val);
           while (keys_[index] != key_val && inv_[index] != -1) {
               index = (index + 1) % capacity_;
           }
