@@ -11,7 +11,7 @@ See the Mulan PSL v2 for more details. */
 #include <vector>
 #include <iostream>
 #include <unordered_map>
-#include <cstring>
+#include <string.h>
 
 #include "common/math/simd_util.h"
 #include "common/rc.h"
