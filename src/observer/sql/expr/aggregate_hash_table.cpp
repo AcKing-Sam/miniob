@@ -257,66 +257,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   //7. 通过标量线性探测，处理剩余键值对
 
   // resize_if_need();
-  std::vector<int> inv(SIMD_WIDTH, -1);
-    std::vector<int> off(SIMD_WIDTH, 0);
 
-    int i = 0;
-
-    for (; i + SIMD_WIDTH <= len; ) {
-        __m256i inv_vec = _mm256_loadu_si256((__m256i*)inv.data());
-        __m256i off_vec = _mm256_loadu_si256((__m256i*)off.data());
-
-        std::vector<int> keys(SIMD_WIDTH);
-        std::vector<V> values(SIMD_WIDTH);
-
-        for (int j = 0; j < SIMD_WIDTH; ++j) {
-            if (inv[j] == -1) {
-                keys[j] = input_keys[i];
-                values[j] = input_values[i];
-                i++;
-            }
-        }
-
-        __m256i key_vec = _mm256_loadu_si256((__m256i*)keys.data());
-        __m256i hash_vec = _mm256_rem_epi32(key_vec, _mm256_set1_epi32(capacity_));
-
-        for (int j = 0; j < SIMD_WIDTH; ++j) {
-            int hash_val = _mm256_extract_epi32(hash_vec, j);
-            int pos = (hash_val + off[j]) % capacity_;
-            if (keys_[pos] == keys[j] || keys_[pos] == 0) {
-                values_[pos] += values[j];
-                inv[j] = -1;
-                off[j] = 0;
-            } else {
-                inv[j] = 0;
-                off[j]++;
-            }
-        }
-
-        _mm256_storeu_si256((__m256i*)inv.data(), inv_vec);
-        _mm256_storeu_si256((__m256i*)off.data(), off_vec);
-    }
-
-    for (; i < len; ++i) {
-        int key = input_keys[i];
-        V value = input_values[i];
-        int pos = hash_function(key);
-        int offset = 0;
-
-        while (keys_[pos] != key && keys_[pos] != 0) {
-            pos = (pos + 1) % capacity_;
-            offset++;
-        }
-
-        if (keys_[pos] == 0) {
-            keys_[pos] = key;
-        }
-
-        values_[pos] += value;
-    }
-
-  // resize_if_needed();
-  /*
   int inv[SIMD_WIDTH];
   int off[SIMD_WIDTH];
   memset(inv, -1, sizeof(inv)); // Initialize inv to -1
@@ -387,9 +328,6 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       }
       ++i;
   }
-
-  // resize_if_need();
-  */
 }
 
 template <typename V>
