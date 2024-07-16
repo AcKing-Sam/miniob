@@ -57,11 +57,10 @@ public:
       int col_id = 0;
       Chunk group_chunks, aggrs_chunks;
       for(auto& group_expr : group_by_exprs_) {
-        // std::cout << "group pos: " << group_expr->pos() << std::endl;
         Column col;
         group_expr->get_column(chunk_, col);
         group_chunks.add_column(make_unique<Column>(col.attr_type(), col.attr_len()), col_id);
-        group_chunks.column_ptr(col_id)->reference(col);
+        group_chunks.column_ptr(col_id)->append(col.data(), col.count());
         col_id ++;
       }
       col_id = 0;
@@ -69,7 +68,7 @@ public:
         Column col;
         aggrs_expr->get_column(chunk_, col);
         aggrs_chunks.add_column(make_unique<Column>(col.attr_type(), col.attr_len()), col_id);
-        aggrs_chunks.column_ptr(col_id)->reference(col);
+        aggrs_chunks.column_ptr(col_id)->append(col.data(), col.count());
         col_id ++;
       }
       rc = ht_.add_chunk(group_chunks, aggrs_chunks);
