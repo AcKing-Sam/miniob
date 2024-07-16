@@ -10,8 +10,12 @@ See the Mulan PSL v2 for more details. */
 
 #pragma once
 
+#include <algorithm>
 #include "sql/expr/aggregate_hash_table.h"
 #include "sql/operator/physical_operator.h"
+
+using namespace std;
+using namespace common;
 
 /**
  * @brief Group By 物理算子(vectorized)
@@ -25,7 +29,7 @@ public:
       : group_by_exprs_(std::move(group_by_exprs)), ht_(expressions) {
         aggregate_expressions_ = expressions;
         value_expressions_.reserve(aggregate_expressions_.size());
-        std::ranges::for_each(aggregate_expressions_, [this](Expression *expr) {
+        ranges::for_each(aggregate_expressions_, [this](Expression *expr) {
           auto       *aggregate_expr = static_cast<AggregateExpr *>(expr);
           Expression *child_expr     = aggregate_expr->child().get();
           ASSERT(child_expr != nullptr, "aggregate expression must have a child expression");
