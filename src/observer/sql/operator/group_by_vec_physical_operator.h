@@ -10,10 +10,8 @@ See the Mulan PSL v2 for more details. */
 
 #pragma once
 
-#include "sql/operator/physical_operator.h"
 #include "sql/expr/aggregate_hash_table.h"
-
-using namespace std;
+#include "sql/operator/physical_operator.h"
 
 /**
  * @brief Group By 物理算子(vectorized)
