@@ -51,12 +51,11 @@ public:
     }
 
     while (OB_SUCC(rc = child.next(chunk_))) {
-      // std::cout << "chunk col: " << chunk_.column_num() << std::endl;
       // traverse each row of chunk_
       int col_id = 0;
       Chunk group_chunks, aggrs_chunks;
       for(auto& group_expr : group_by_exprs_) {
-        std::cout << "group pos: " << group_expr->pos() << std::endl;
+        // std::cout << "group pos: " << group_expr->pos() << std::endl;
         Column col;
         group_expr->get_column(chunk_, col);
         group_chunks.add_column(make_unique<Column>(col.attr_type(), col.attr_len()), col_id);
@@ -67,9 +66,6 @@ public:
       for(auto aggrs_expr : value_expressions_) {
         Column col;
         aggrs_expr->get_column(chunk_, col);
-        // AggregateExpr* expr = (AggregateExpr*)aggrs_expr;
-        std::cout << "aggr pos: " << aggrs_expr->pos() << std::endl;
-        // expr->child()->get_column(chunk_, col);
         aggrs_chunks.add_column(make_unique<Column>(col.attr_type(), col.attr_len()), col_id);
         aggrs_chunks.column_ptr(col_id)->reference(col);
         col_id ++;
@@ -111,7 +107,6 @@ public:
     while(OB_SUCC(sc.next(chunk))) {
 
     }
-    // std::cout << 666 << " " << chunk.rows() << " " << ht_.size() << " " << chunk.column_num() << std::endl;
     emited_ = true;
     return RC::SUCCESS;
   }

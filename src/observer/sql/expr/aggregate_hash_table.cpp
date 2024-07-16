@@ -27,11 +27,11 @@ RC StandardAggregateHashTable::add_chunk(Chunk &groups_chunk, Chunk &aggrs_chunk
       for (size_t aggr_idx = 0; aggr_idx < aggrs_chunk.column_num(); aggr_idx++) {
         if(aggr_values_[group_vals].at(aggr_idx).attr_type() == AttrType::INTS) {
           int old_val = aggr_values_[group_vals].at(aggr_idx).get_int();
-          std::cout << "old val: " << old_val << " " << aggrs_vals[aggr_idx].get_float() << std::endl;
+          // std::cout << "old val: " << old_val << " " << aggrs_vals[aggr_idx].get_float() << std::endl;
           aggr_values_[group_vals].at(aggr_idx).set_int(aggrs_vals[aggr_idx].get_int() + old_val);
         } else if(aggr_values_[group_vals].at(aggr_idx).attr_type() == AttrType::FLOATS) {
           float old_val = aggr_values_[group_vals].at(aggr_idx).get_float();
-          std::cout << "old val: " << old_val << " " << aggrs_vals[aggr_idx].get_float() << std::endl;
+          // std::cout << "old val: " << old_val << " " << aggrs_vals[aggr_idx].get_float() << std::endl;
           aggr_values_[group_vals].at(aggr_idx).set_float(aggrs_vals[aggr_idx].get_float() + old_val);
         }
       }
@@ -236,12 +236,10 @@ template <typename V>
 void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_values, int len)
 {
   // your code here
-  exit(-1);
-
   // inv (invalid) 表示是否有效，inv[i] = -1 表示有效，inv[i] = 0 表示无效。
-  // key[SIMD_WIDTH],value[SIMD_WIDTH] 表示当前循环中处理的键值对。
-  // off (offset) 表示线性探测冲突时的偏移量，key[i] 每次遇到冲突键，则off[i]++，如果key[i] 已经完成聚合，则off[i] = 0，
-  // i = 0 表示selective load 的起始位置。
+  // key[SIMD_WIDTH], value[SIMD_WIDTH] 表示当前循环中处理的键值对。
+  // off (offset) 表示线性探测冲突时的偏移量，key[i] 每次遇到冲突键，则 off[i]++，如果key[i] 已经完成聚合，则off[i] = 0，
+  // i = 0 表示 selective load 的起始位置。
   // inv 全部初始化为 -1
   // off 全部初始化为 0
 
@@ -258,6 +256,79 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   //7. 通过标量线性探测，处理剩余键值对
 
   // resize_if_need();
+
+  int inv[SIMD_WIDTH];
+  int off[SIMD_WIDTH];
+  std::memset(inv, -1, sizeof(inv)); // Initialize inv to -1
+  std::memset(off, 0, sizeof(off));  // Initialize off to 0
+
+  int i = 0;
+  while (i + SIMD_WIDTH <= len) {
+      __m256i keys = _mm256_setzero_si256();
+      __m256i values = _mm256_setzero_si256();
+      int active_keys = 0;
+
+      for (int j = 0; j < SIMD_WIDTH; ++j) {
+          if (inv[j] == -1 && i < len) {
+              keys = _mm256_insert_epi32(keys, input_keys[i], j);
+              values = _mm256_insert_epi32(values, input_values[i], j);
+              inv[j] = 0;
+              ++i;
+              ++active_keys;
+          }
+      }
+
+      // Calculate hash values
+      __m256i hash_vals = _mm256_setzero_si256();
+      for (int j = 0; j < SIMD_WIDTH; ++j) {
+          if (inv[j] != -1) {
+              int key = _mm256_extract_epi32(keys, j);
+              int hash_val = hash_function(key + off[j]);
+              hash_vals = _mm256_insert_epi32(hash_vals, hash_val, j);
+          }
+      }
+
+      // Gather operation
+      __m256i table_keys = _mm256_i32gather_epi32(keys_, hash_vals, 4);
+
+      // Update hash table
+      for (int j = 0; j < SIMD_WIDTH; ++j) {
+          if (inv[j] != -1) {
+              int key = _mm256_extract_epi32(keys, j);
+              int table_key = _mm256_extract_epi32(table_keys, j);
+              int hash_val = _mm256_extract_epi32(hash_vals, j);
+
+              if (table_key == key) {
+                  values_[hash_val] += _mm256_extract_epi32(values, j);
+                  inv[j] = -1; // Mark as done
+                  off[j] = 0;
+              } else {
+                  off[j]++;
+              }
+          }
+      }
+  }
+
+  // Process remaining elements
+  while (i < len) {
+      int key = input_keys[i];
+      V value = input_values[i];
+      int hash_val = hash_function(key);
+
+      while (keys_[hash_val] != key && keys_[hash_val] != 0) {
+          hash_val = (hash_val + 1) % hash_table_size_;
+      }
+
+      if (keys_[hash_val] == key) {
+          values_[hash_val] += value;
+      } else {
+          keys_[hash_val] = key;
+          values_[hash_val] = value;
+      }
+      ++i;
+  }
+
+  resize_if_need();
 }
 
 template <typename V>
