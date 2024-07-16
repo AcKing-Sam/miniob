@@ -263,10 +263,12 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   std::cout << "cap " << capacity_ << std::endl;
 
   int i = 0;
-  while (i + SIMD_WIDTH <= len) {
-      __m256i keys = _mm256_setzero_si256();
-      __m256i values = _mm256_setzero_si256();
+  __m256i keys = _mm256_setzero_si256();
+  __m256i values = _mm256_setzero_si256();
+  __m256i hash_vals = _mm256_setzero_si256();
+  __m256i table_keys;
 
+  while (i + SIMD_WIDTH <= len) {
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if (inv[j] == -1 && i < len) {
               std::cout << "insert pos " << j << " key: " << input_keys[i] << std::endl;
@@ -278,7 +280,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       }
 
       // Calculate hash values
-      __m256i hash_vals = _mm256_setzero_si256();
+      
       for (int j = 0; j < SIMD_WIDTH; ++j) {
         if(inv[j] != -1) {
           int key = mm256_extract_epi32_var_indx(keys, j);
@@ -292,7 +294,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if(inv[j] == -1) continue;
           int key = mm256_extract_epi32_var_indx(keys, j);
-          int hash_val = hash_function(key);
+          int hash_val = hash_function(key + off[j]);
 
           if (keys_[hash_val] == key) {
               values_[hash_val] += mm256_extract_epi32_var_indx(values, j);
@@ -302,9 +304,8 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       }
 
       // Gather operation
-      __m256i table_keys = _mm256_i32gather_epi32(keys_.data(), hash_vals, 4);
+      table_keys = _mm256_i32gather_epi32(keys_.data(), hash_vals, 4);
 
-      // Update hash table
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if(inv[j] == -1) continue;
           int key = mm256_extract_epi32_var_indx(keys, j);
@@ -329,6 +330,18 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
           } else {
               off[j]++;
           }
+      }
+  }
+
+  for (int j = 0; j < SIMD_WIDTH; ++j) {
+      if(inv[j] == -1) continue;
+      int key = mm256_extract_epi32_var_indx(keys, j);
+      int hash_val = hash_function(key + off[j]);
+
+      if (keys_[hash_val] == key) {
+          values_[hash_val] += mm256_extract_epi32_var_indx(values, j);
+          inv[j] = -1; // Mark as done
+          off[j] = 0;
       }
   }
 
