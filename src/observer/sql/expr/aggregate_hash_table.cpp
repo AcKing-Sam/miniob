@@ -268,7 +268,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if (inv[j] == -1 && i < len) {
               keys = insert_value(keys, input_keys[i], j);
-              values = insert_value(values, input_values[i], jj);
+              values = insert_value(values, input_values[i], j);
               inv[j] = 0;
               ++i;
           }
