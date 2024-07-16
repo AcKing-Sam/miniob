@@ -260,6 +260,8 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   memset(inv, -1, sizeof(inv)); // Initialize inv to -1
   memset(off, 0, sizeof(off));  // Initialize off to 0
 
+  std::cout << "cap " << capacity_ << std::endl;
+
   int i = 0;
   while (i + SIMD_WIDTH <= len) {
       __m256i keys = _mm256_setzero_si256();
@@ -299,6 +301,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
               inv[j] = -1; // Mark as done
               off[j] = 0;
           } else if(table_key == EMPTY_KEY) {
+              std::cout << "key " << key << "insert into empty " << hash_val << std::endl;
               keys_[hash_val] = key;
               values_[hash_val] = mm256_extract_epi32_var_indx(values, j);
               inv[j] = -1; // Mark as done
