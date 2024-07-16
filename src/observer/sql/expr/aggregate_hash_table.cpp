@@ -267,8 +267,9 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
 
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if (inv[j] == -1 && i < len) {
-              keys = _mm256_insert_epi32(keys, input_keys[i], j);
-              values = _mm256_insert_epi32(values, input_values[i], j);
+              const int jj = j;
+              keys = _mm256_insert_epi32(keys, input_keys[i], jj);
+              values = _mm256_insert_epi32(values, input_values[i], jj);
               inv[j] = 0;
               ++i;
           }
