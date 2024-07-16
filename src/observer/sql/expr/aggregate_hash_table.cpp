@@ -283,7 +283,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
         if(inv[j] != -1) {
           int key = mm256_extract_epi32_var_indx(keys, j);
           int hash_val = hash_function(key + off[j]);
-          std::cout << "cal hash vals, pos: " << j << " key: " << input_keys[i] << " hash val: " << hash_val << std::endl;
+          std::cout << "cal hash vals, pos: " << j << " key: " << key << " hash val: " << hash_val << std::endl;
           hash_vals = insert_value(hash_vals, hash_val, j);
         }
       }
