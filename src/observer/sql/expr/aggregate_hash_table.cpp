@@ -312,10 +312,14 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
           int hash_val = mm256_extract_epi32_var_indx(hash_vals, j);
 
           if(table_key == EMPTY_KEY) {
-              if(keys_[hash_val] != EMPTY_KEY) {
+              if(keys_[hash_val] != EMPTY_KEY && keys_[hash_val] != key) {
                 off[j]++;
+              } else if(keys_[hash_val] != EMPTY_KEY && keys_[hash_val] == key) {
+                values_[hash_val] += mm256_extract_epi32_var_indx(values, j);
+                inv[j] = -1; // Mark as done
+                off[j] = 0;
               } else {
-                std::cout << "key " << key << "insert into empty " << hash_val << std::endl;
+                // std::cout << "key " << key << "insert into empty " << hash_val << std::endl;
                 keys_[hash_val] = key;
                 values_[hash_val] = mm256_extract_epi32_var_indx(values, j);
                 inv[j] = -1; // Mark as done
