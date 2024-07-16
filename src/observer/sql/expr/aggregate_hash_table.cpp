@@ -255,8 +255,6 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   // }
   //7. 通过标量线性探测，处理剩余键值对
 
-  // resize_if_need();
-
   int inv[SIMD_WIDTH];
   int off[SIMD_WIDTH];
   memset(inv, -1, sizeof(inv)); // Initialize inv to -1
@@ -313,7 +311,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       V value = input_values[i];
       int hash_val = hash_function(key);
 
-      while (keys_[hash_val] != key && keys_[hash_val] != 0) {
+      while (keys_[hash_val] != key && keys_[hash_val] != EMPTY_KEY) {
           hash_val = (hash_val + 1) % size_;
       }
 
