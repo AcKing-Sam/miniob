@@ -277,11 +277,9 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       // Calculate hash values
       __m256i hash_vals = _mm256_setzero_si256();
       for (int j = 0; j < SIMD_WIDTH; ++j) {
-          
-              int key = _mm256_extract_epi32(keys, j);
-              int hash_val = hash_function(key + off[j]);
-              hash_vals = _mm256_insert_epi32(hash_vals, hash_val, j);
-          
+        int key = _mm256_extract_epi32(keys, j);
+        int hash_val = hash_function(key + off[j]);
+        hash_vals = _mm256_insert_epi32(hash_vals, hash_val, j);
       }
 
       // Gather operation
@@ -304,6 +302,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
                   off[j] = 0;
               } else {
                   off[j]++;
+                  inv[j] = 0;
               }
           }
       }
