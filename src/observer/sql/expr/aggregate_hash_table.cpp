@@ -258,80 +258,81 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
 
   // resize_if_need();
   int *key = new int[SIMD_WIDTH];
-        V *value = new V[SIMD_WIDTH];
-        int off[SIMD_WIDTH] = {0}; // Initialize offsets
-        int i = 0;
+  V *value = new V[SIMD_WIDTH];
+  int inv_[SIMD_WIDTH] = {0};
+  int off[SIMD_WIDTH] = {0}; // Initialize offsets
+  int i = 0;
 
-        while (i + SIMD_WIDTH <= len) {
-            // 1. Selective load based on inv
-            for (int j = 0; j < SIMD_WIDTH; ++j) {
-                if (i + j < len && inv_[i + j] == -1) {
-                    key[j] = input_keys[i + j];
-                    value[j] = input_values[i + j];
-                    inv_[i + j] = 0; // Mark as not invalid for next iteration
-                } else {
-                    key[j] = -1; // Placeholder for non-valid keys
-                }
-            }
+  while (i + SIMD_WIDTH <= len) {
+      // 1. Selective load based on inv
+      for (int j = 0; j < SIMD_WIDTH; ++j) {
+          if (i + j < len && inv_[i + j] == -1) {
+              key[j] = input_keys[i + j];
+              value[j] = input_values[i + j];
+              inv_[i + j] = 0; // Mark as not invalid for next iteration
+          } else {
+              key[j] = -1; // Placeholder for non-valid keys
+          }
+      }
 
-            // 2. Calculate the number of valid keys
-            int valid_keys = 0;
-            for (int j = 0; j < SIMD_WIDTH; ++j) {
-                if (key[j] != -1) ++valid_keys;
-            }
+      // 2. Calculate the number of valid keys
+      int valid_keys = 0;
+      for (int j = 0; j < SIMD_WIDTH; ++j) {
+          if (key[j] != -1) ++valid_keys;
+      }
 
-            // 3. Calculate hash values and update the hash table
-            for (int j = 0; j < SIMD_WIDTH; ++j) {
-                if (key[j] != -1) {
-                    int index = hash(key[j]);
-                    while (keys_[index] != key[j] && inv_[index] != -1) {
-                        index = (index + 1) % capacity_; // Linear probing
-                    }
-                    if (keys_[index] == key[j]) {
-                        values_[index] += value[j]; // Aggregate if key exists
-                    } else {
-                        keys_[index] = key[j];
-                        values_[index] = value[j];
-                        ++size_;
-                    }
-                    off[j] = (index + 1) % capacity_; // Prepare for next iteration
-                }
-            }
+      // 3. Calculate hash values and update the hash table
+      for (int j = 0; j < SIMD_WIDTH; ++j) {
+          if (key[j] != -1) {
+              int index = hash(key[j]);
+              while (keys_[index] != key[j] && inv_[index] != -1) {
+                  index = (index + 1) % capacity_; // Linear probing
+              }
+              if (keys_[index] == key[j]) {
+                  values_[index] += value[j]; // Aggregate if key exists
+              } else {
+                  keys_[index] = key[j];
+                  values_[index] = value[j];
+                  ++size_;
+              }
+              off[j] = (index + 1) % capacity_; // Prepare for next iteration
+          }
+      }
 
-            // 4. Update inv and off for next iteration
-            for (int j = 0; j < SIMD_WIDTH; ++j) {
-                if (key[j] != -1) {
-                    inv_[i + j] = -1; // Mark as processed
-                }
-            }
+      // 4. Update inv and off for next iteration
+      for (int j = 0; j < SIMD_WIDTH; ++j) {
+          if (key[j] != -1) {
+              inv_[i + j] = -1; // Mark as processed
+          }
+      }
 
-            // 5. Move to the next batch
-            i += valid_keys;
-        }
+      // 5. Move to the next batch
+      i += valid_keys;
+  }
 
-        // 7. Scalar linear probing for the remaining keys
-        for (; i < len; ++i) {
-            if (inv_[i] == -1) {
-                int key_val = input_keys[i];
-                int index = hash(key_val);
-                while (keys_[index] != key_val && inv_[index] != -1) {
-                    index = (index + 1) % capacity_;
-                }
-                if (keys_[index] == key_val) {
-                    values_[index] += input_values[i];
-                } else {
-                    keys_[index] = key_val;
-                    values_[index] = input_values[i];
-                    ++size_;
-                }
-                inv_[i] = -1;
-            }
-        }
+  // 7. Scalar linear probing for the remaining keys
+  for (; i < len; ++i) {
+      if (inv_[i] == -1) {
+          int key_val = input_keys[i];
+          int index = hash(key_val);
+          while (keys_[index] != key_val && inv_[index] != -1) {
+              index = (index + 1) % capacity_;
+          }
+          if (keys_[index] == key_val) {
+              values_[index] += input_values[i];
+          } else {
+              keys_[index] = key_val;
+              values_[index] = input_values[i];
+              ++size_;
+          }
+          inv_[i] = -1;
+      }
+  }
 
-        delete[] key;
-        delete[] value;
+  delete[] key;
+  delete[] value;
 
-        resize_if_needed();
+  resize_if_needed();
   /*
   int inv[SIMD_WIDTH];
   int off[SIMD_WIDTH];
