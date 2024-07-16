@@ -170,7 +170,7 @@ TEST(AggregateHashTableTest, linear_probing_hash_table)
     scanner.open_scan();
     rc = scanner.next(output_chunk);
     ASSERT_EQ(rc, RC::SUCCESS);
-    // ASSERT_EQ(output_chunk.rows(), 2);
+    ASSERT_EQ(output_chunk.rows(), 2);
     ASSERT_STREQ(output_chunk.get_value(1, 0).get_string().c_str(), "501");
     ASSERT_STREQ(output_chunk.get_value(1, 1).get_string().c_str(), "501");
   }
