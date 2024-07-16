@@ -289,8 +289,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if(inv[j] == -1) continue;
           int key = mm256_extract_epi32_var_indx(keys, j);
-          int table_key = mm256_extract_epi32_var_indx(table_keys, j);
-          int hash_val = mm256_extract_epi32_var_indx(hash_vals, j);
+          int hash_val = hash_function(key);
 
           if (table_key == key) {
               values_[hash_val] += mm256_extract_epi32_var_indx(values, j);
