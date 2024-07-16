@@ -266,7 +266,6 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   while (i + SIMD_WIDTH <= len) {
       __m256i keys = _mm256_setzero_si256();
       __m256i values = _mm256_setzero_si256();
-      int active_keys = 0;
 
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if (inv[j] == -1 && i < len) {
@@ -274,7 +273,6 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
               values = _mm256_insert_epi32(values, input_values[i], j);
               inv[j] = 0;
               ++i;
-              ++active_keys;
           }
       }
 
@@ -327,6 +325,8 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       }
       ++i;
   }
+
+  resize_if_need();
 }
 
 template <typename V>

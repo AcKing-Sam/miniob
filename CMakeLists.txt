@@ -16,10 +16,10 @@ OPTION(ENABLE_UBSAN "Build with undefined behavior sanitizer" OFF)
 OPTION(WITH_UNIT_TESTS "Compile miniob with unit tests" ON)
 OPTION(WITH_BENCHMARK "Compile benchmark" ON)
 # TODO: support MemTracer with sanitizers, currently MemTracer doesn't work with sanitizers.
-OPTION(WITH_MEMTRACER "Compile memtracer" ON)
+OPTION(WITH_MEMTRACER "Compile memtracer" ON)   
 OPTION(ENABLE_COVERAGE "Enable unittest coverage" OFF)
 OPTION(ENABLE_NOPIE "Enable no pie" OFF)
-OPTION(CONCURRENCY "Support concurrency operations" OFF)
+OPTION(CONCURRENCY "Support concurrency operations" ON)
 OPTION(STATIC_STDLIB "Link std library static or dynamic, such as libgcc, libstdc++, libasan" OFF)
 OPTION(USE_SIMD "Use SIMD" OFF)
 
@@ -52,7 +52,7 @@ ENDIF (ENABLE_NOPIE)
 
 # Requires support for avx2
 IF(USE_SIMD)
-    SET(CMAKE_COMMON_FLAGS "${CMAKE_COMMON_FLAGS} -mavx2")
+    SET(CMAKE_COMMON_FLAGS "${CMAKE_COMMON_FLAGS} -march=core-avx2")
     ADD_DEFINITIONS(-DUSE_SIMD)
 ENDIF(USE_SIMD)
 
