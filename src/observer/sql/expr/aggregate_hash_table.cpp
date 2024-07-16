@@ -286,10 +286,6 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
         }
       }
 
-      // Gather operation
-      __m256i table_keys = _mm256_i32gather_epi32(keys_.data(), hash_vals, 4);
-
-      // Update hash table
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if(inv[j] == -1) continue;
           int key = mm256_extract_epi32_var_indx(keys, j);
@@ -300,13 +296,30 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
               values_[hash_val] += mm256_extract_epi32_var_indx(values, j);
               inv[j] = -1; // Mark as done
               off[j] = 0;
-          } else if(table_key == EMPTY_KEY) {
-              std::cout << "key " << key << "insert into empty " << hash_val << std::endl;
-              keys_[hash_val] = key;
-              values_[hash_val] = mm256_extract_epi32_var_indx(values, j);
-              inv[j] = -1; // Mark as done
-              off[j] = 0;
-              size_++;
+          }
+      }
+
+      // Gather operation
+      __m256i table_keys = _mm256_i32gather_epi32(keys_.data(), hash_vals, 4);
+
+      // Update hash table
+      for (int j = 0; j < SIMD_WIDTH; ++j) {
+          if(inv[j] == -1) continue;
+          int key = mm256_extract_epi32_var_indx(keys, j);
+          int table_key = mm256_extract_epi32_var_indx(table_keys, j);
+          int hash_val = mm256_extract_epi32_var_indx(hash_vals, j);
+
+          if(table_key == EMPTY_KEY) {
+              if(keys_[hash_val] != EMPTY_KEY) {
+                off[j]++;
+              } else {
+                std::cout << "key " << key << "insert into empty " << hash_val << std::endl;
+                keys_[hash_val] = key;
+                values_[hash_val] = mm256_extract_epi32_var_indx(values, j);
+                inv[j] = -1; // Mark as done
+                off[j] = 0;
+                size_++;
+              }
           } else {
               off[j]++;
           }
