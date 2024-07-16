@@ -289,7 +289,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       }
 
       // Gather operation
-      __m256i table_keys = _mm256_i32gather_epi32( , hash_vals, 4);
+      __m256i table_keys = _mm256_i32gather_epi32(keys_.data(), hash_vals, 4);
 
       // Update hash table
       for (int j = 0; j < SIMD_WIDTH; ++j) {
@@ -316,7 +316,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       int hash_val = hash_function(key);
 
       while (keys_[hash_val] != key && keys_[hash_val] != 0) {
-          hash_val = (hash_val + 1) % hash_table_size_;
+          hash_val = (hash_val + 1) % size_;
       }
 
       if (keys_[hash_val] == key) {
