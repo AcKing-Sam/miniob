@@ -259,8 +259,8 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
 
   int inv[SIMD_WIDTH];
   int off[SIMD_WIDTH];
-  std::memset(inv, -1, sizeof(inv)); // Initialize inv to -1
-  std::memset(off, 0, sizeof(off));  // Initialize off to 0
+  memset(inv, -1, sizeof(inv)); // Initialize inv to -1
+  memset(off, 0, sizeof(off));  // Initialize off to 0
 
   int i = 0;
   while (i + SIMD_WIDTH <= len) {
