@@ -517,17 +517,10 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
   int column_num = page_header_->column_num;
   int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for (int i = 0; i < column_num; ++i) {
-    int col_len = 0;
-    if(i == 0) {
-      col_len = column_index[i] / page_header_->record_capacity;
-    } else {
-      col_len = (column_index[i] - column_index[i - 1]) / page_header_->record_capacity;
-    }
-    // char *record_col_data = frame_->data() + page_header_->data_offset + prev_cols_len + col_len * rid.slot_num;
+    int col_len = get_field_len(i);
     record.set_field(prev_cols_len / page_header_->record_capacity, col_len, get_field_data(rid.slot_num, i));
     prev_cols_len += page_header_->record_capacity * col_len;
   }
-
   return RC::SUCCESS;
 }
 
