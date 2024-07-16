@@ -27,7 +27,7 @@ public:
   GroupByVecPhysicalOperator(
       std::vector<std::unique_ptr<Expression>> &&group_by_exprs, std::vector<Expression *> &&expressions)
       : group_by_exprs_(std::move(group_by_exprs)), ht_(expressions) {
-        aggregate_expressions_ = std::move(expressions);
+        aggregate_expressions_ = expressions;
         value_expressions_.reserve(aggregate_expressions_.size());
         ranges::for_each(aggregate_expressions_, [this](Expression *expr) {
           auto       *aggregate_expr = static_cast<AggregateExpr *>(expr);
@@ -51,6 +51,7 @@ public:
     }
 
     while (OB_SUCC(rc = child.next(chunk_))) {
+      // std::cout << "chunk col: " << chunk_.column_num() << std::endl;
       // traverse each row of chunk_
       int col_id = 0;
       Chunk group_chunks, aggrs_chunks;
@@ -63,10 +64,12 @@ public:
         col_id ++;
       }
       col_id = 0;
-      for(auto& aggrs_expr : aggregate_expressions_) {
+      for(auto aggrs_expr : value_expressions_) {
         Column col;
-        std::cout << "agg pos: " << aggrs_expr->pos() << std::endl;
         aggrs_expr->get_column(chunk_, col);
+        // AggregateExpr* expr = (AggregateExpr*)aggrs_expr;
+        std::cout << "aggr pos: " << aggrs_expr->pos() << std::endl;
+        // expr->child()->get_column(chunk_, col);
         aggrs_chunks.add_column(make_unique<Column>(col.attr_type(), col.attr_len()), col_id);
         aggrs_chunks.column_ptr(col_id)->reference(col);
         col_id ++;
@@ -96,7 +99,7 @@ public:
       chunk.add_column(make_unique<Column>(col.attr_type(), col.attr_len()), col_id);
       col_id ++;
     }
-    for(auto& aggrs_expr : aggregate_expressions_) {
+    for(auto& aggrs_expr : value_expressions_) {
       Column col;
       aggrs_expr->get_column(chunk_, col);
       chunk.add_column(make_unique<Column>(col.attr_type(), col.attr_len()), col_id);

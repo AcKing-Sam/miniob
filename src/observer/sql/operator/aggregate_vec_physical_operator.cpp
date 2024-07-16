@@ -121,6 +121,7 @@ RC AggregateVecPhysicalOperator::next(Chunk &chunk)
       }
     }
   }
+  std::cout << "agg vec " << chunk.column_num() << std::endl;
   if(rc == RC::SUCCESS) {
     flag_ = true;
     return RC::SUCCESS;
@@ -132,7 +133,7 @@ RC AggregateVecPhysicalOperator::close()
 {
   children_[0]->close();
   flag_ = false;
-  output_chunk_.reset();
+  //output_chunk_.reset();
   LOG_INFO("close group by operator");
   return RC::SUCCESS;
 }

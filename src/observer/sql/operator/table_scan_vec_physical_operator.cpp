@@ -60,6 +60,7 @@ RC TableScanVecPhysicalOperator::next(Chunk &chunk)
       chunk.reference(filterd_columns_);
     }
   }
+  // std::cout << "vec table scan: " << chunk.column_num() << std::endl;
   return rc;
 }
 
