@@ -312,7 +312,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       int hash_val = hash_function(key);
 
       while (keys_[hash_val] != key && keys_[hash_val] != EMPTY_KEY) {
-          hash_val = (hash_val + 1) % size_;
+          hash_val = (hash_val + 1) % capacity_;
       }
 
       if (keys_[hash_val] == key) {
