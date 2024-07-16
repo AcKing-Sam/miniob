@@ -30,6 +30,7 @@ public:
 
   Column &column(size_t idx)
   {
+    std::cout << idx << " " << columns_.size() << std::endl;
     ASSERT(idx < columns_.size(), "invalid column index");
     return *columns_[idx];
   }

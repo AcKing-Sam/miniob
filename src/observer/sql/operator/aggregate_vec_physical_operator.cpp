@@ -51,6 +51,7 @@ AggregateVecPhysicalOperator::AggregateVecPhysicalOperator(vector<Expression *> 
       ASSERT(false, "not supported aggregation type");
     }
   }
+  flag_ = false;
 }
 
 RC AggregateVecPhysicalOperator::open(Trx *trx)
@@ -87,7 +88,7 @@ RC AggregateVecPhysicalOperator::open(Trx *trx)
   if (rc == RC::RECORD_EOF) {
     rc = RC::SUCCESS;
   }
-
+  flag_ = false;
   return rc;
 }
 template <class STATE, typename T>
@@ -100,28 +101,38 @@ void AggregateVecPhysicalOperator::update_aggregate_state(void *state, const Col
 
 RC AggregateVecPhysicalOperator::next(Chunk &chunk)
 {
+  if(flag_) {
+    return RC::RECORD_EOF;
+  }
+  RC rc = RC::SUCCESS;
   for (size_t aggr_idx = 0; aggr_idx < aggregate_expressions_.size(); aggr_idx++) {
     auto *aggregate_expr = static_cast<AggregateExpr *>(aggregate_expressions_[aggr_idx]);
     if (aggregate_expr->aggregate_type() == AggregateExpr::Type::SUM) {
       if (aggregate_expr->value_type() == AttrType::INTS) {
-        // update_aggregate_state<SumState<int>, int>(aggr_values_.at(aggr_idx), column);
-        output_chunk_.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
+        // rc = output_chunk_.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
+        chunk.add_column(make_unique<Column>(AttrType::INTS, sizeof(int)), aggr_idx);
+        chunk.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
+        // std::cout << *(int *)aggr_values_.at(aggr_idx) << std::endl;
       } else if (aggregate_expr->value_type() == AttrType::FLOATS) {
-        // update_aggregate_state<SumState<float>, float>(aggr_values_.at(aggr_idx), column);
-        output_chunk_.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
-      } else {
-        ASSERT(false, "not supported value type");
+        // rc = output_chunk_.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
+        chunk.add_column(make_unique<Column>(AttrType::FLOATS, sizeof(float)), aggr_idx);
+        chunk.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
+        // std::cout << *(float *)aggr_values_.at(aggr_idx) << std::endl;
       }
-    } else {
-      ASSERT(false, "not supported aggregation type");
     }
   }
-  return RC::SUCCESS;
+  if(rc == RC::SUCCESS) {
+    flag_ = true;
+    return RC::SUCCESS;
+  }
+  return rc;
 }
 
 RC AggregateVecPhysicalOperator::close()
 {
   children_[0]->close();
+  flag_ = false;
+  output_chunk_.reset();
   LOG_INFO("close group by operator");
   return RC::SUCCESS;
 }
