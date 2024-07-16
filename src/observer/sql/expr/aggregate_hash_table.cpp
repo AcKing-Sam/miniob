@@ -257,80 +257,63 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   //7. 通过标量线性探测，处理剩余键值对
 
   // resize_if_need();
-  int *key = new int[SIMD_WIDTH];
-  V *value = new V[SIMD_WIDTH];
-  int inv_[SIMD_WIDTH] = {0};
-  int off[SIMD_WIDTH] = {0}; // Initialize offsets
-  int i = 0;
+  std::vector<int> inv(SIMD_WIDTH, -1);
+    std::vector<int> off(SIMD_WIDTH, 0);
 
-  while (i + SIMD_WIDTH <= len) {
-      // 1. Selective load based on inv
-      for (int j = 0; j < SIMD_WIDTH; ++j) {
-          if (i + j < len && inv_[i + j] == -1) {
-              key[j] = input_keys[i + j];
-              value[j] = input_values[i + j];
-              inv_[i + j] = 0; // Mark as not invalid for next iteration
-          } else {
-              key[j] = -1; // Placeholder for non-valid keys
-          }
-      }
+    int i = 0;
 
-      // 2. Calculate the number of valid keys
-      int valid_keys = 0;
-      for (int j = 0; j < SIMD_WIDTH; ++j) {
-          if (key[j] != -1) ++valid_keys;
-      }
+    for (; i + SIMD_WIDTH <= len; ) {
+        __m256i inv_vec = _mm256_loadu_si256((__m256i*)inv.data());
+        __m256i off_vec = _mm256_loadu_si256((__m256i*)off.data());
 
-      // 3. Calculate hash values and update the hash table
-      for (int j = 0; j < SIMD_WIDTH; ++j) {
-          if (key[j] != -1) {
-              int index = hash_function(key[j]);
-              while (keys_[index] != key[j] && inv_[index] != -1) {
-                  index = (index + 1) % capacity_; // Linear probing
-              }
-              if (keys_[index] == key[j]) {
-                  values_[index] += value[j]; // Aggregate if key exists
-              } else {
-                  keys_[index] = key[j];
-                  values_[index] = value[j];
-                  ++size_;
-              }
-              off[j] = (index + 1) % capacity_; // Prepare for next iteration
-          }
-      }
+        std::vector<int> keys(SIMD_WIDTH);
+        std::vector<V> values(SIMD_WIDTH);
 
-      // 4. Update inv and off for next iteration
-      for (int j = 0; j < SIMD_WIDTH; ++j) {
-          if (key[j] != -1) {
-              inv_[i + j] = -1; // Mark as processed
-          }
-      }
+        for (int j = 0; j < SIMD_WIDTH; ++j) {
+            if (inv[j] == -1) {
+                keys[j] = input_keys[i];
+                values[j] = input_values[i];
+                i++;
+            }
+        }
 
-      // 5. Move to the next batch
-      i += valid_keys;
-  }
+        __m256i key_vec = _mm256_loadu_si256((__m256i*)keys.data());
+        __m256i hash_vec = _mm256_rem_epi32(key_vec, _mm256_set1_epi32(capacity_));
 
-  // 7. Scalar linear probing for the remaining keys
-  for (; i < len; ++i) {
-      if (inv_[i] == -1) {
-          int key_val = input_keys[i];
-          int index = hash_function(key_val);
-          while (keys_[index] != key_val && inv_[index] != -1) {
-              index = (index + 1) % capacity_;
-          }
-          if (keys_[index] == key_val) {
-              values_[index] += input_values[i];
-          } else {
-              keys_[index] = key_val;
-              values_[index] = input_values[i];
-              ++size_;
-          }
-          inv_[i] = -1;
-      }
-  }
+        for (int j = 0; j < SIMD_WIDTH; ++j) {
+            int hash_val = _mm256_extract_epi32(hash_vec, j);
+            int pos = (hash_val + off[j]) % capacity_;
+            if (keys_[pos] == keys[j] || keys_[pos] == 0) {
+                values_[pos] += values[j];
+                inv[j] = -1;
+                off[j] = 0;
+            } else {
+                inv[j] = 0;
+                off[j]++;
+            }
+        }
 
-  delete[] key;
-  delete[] value;
+        _mm256_storeu_si256((__m256i*)inv.data(), inv_vec);
+        _mm256_storeu_si256((__m256i*)off.data(), off_vec);
+    }
+
+    for (; i < len; ++i) {
+        int key = input_keys[i];
+        V value = input_values[i];
+        int pos = hash_function(key);
+        int offset = 0;
+
+        while (keys_[pos] != key && keys_[pos] != 0) {
+            pos = (pos + 1) % capacity_;
+            offset++;
+        }
+
+        if (keys_[pos] == 0) {
+            keys_[pos] = key;
+        }
+
+        values_[pos] += value;
+    }
 
   // resize_if_needed();
   /*
