@@ -260,20 +260,6 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   memset(inv, -1, sizeof(inv)); // Initialize inv to -1
   memset(off, 0, sizeof(off));  // Initialize off to 0
 
-  inline __m256i insert_value(__m256i keys, int value, int pos) {
-    switch (pos) {
-        case 0: return _mm256_insert_epi32(keys, value, 0);
-        case 1: return _mm256_insert_epi32(keys, value, 1);
-        case 2: return _mm256_insert_epi32(keys, value, 2);
-        case 3: return _mm256_insert_epi32(keys, value, 3);
-        case 4: return _mm256_insert_epi32(keys, value, 4);
-        case 5: return _mm256_insert_epi32(keys, value, 5);
-        case 6: return _mm256_insert_epi32(keys, value, 6);
-        case 7: return _mm256_insert_epi32(keys, value, 7);
-        default: return keys; // No insertion if pos is out of range
-    }
-}
-
   int i = 0;
   while (i + SIMD_WIDTH <= len) {
       __m256i keys = _mm256_setzero_si256();
