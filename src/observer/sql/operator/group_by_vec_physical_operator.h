@@ -12,8 +12,6 @@ See the Mulan PSL v2 for more details. */
 
 #include "sql/expr/aggregate_hash_table.h"
 #include "sql/operator/physical_operator.h"
-#include "sql/expr/composite_tuple.h"
-#include "sql/expr/expression_tuple.h"
 
 using namespace std;
 
