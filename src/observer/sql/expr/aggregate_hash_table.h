@@ -17,7 +17,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/expr/expression.h"
 
 /**
- * @brief 用于hash group by 的哈希表实现，不支持并发访问。
+ * @brief 用于 hash group by 的哈希表实现, 不支持并发访问。
  */
 class AggregateHashTable
 {
@@ -42,7 +42,7 @@ public:
   };
 
   /**
-   * @brief 将 groups_chunk 和 aggrs_chunk 写入到哈希表中。哈希表中记录了聚合结果。
+   * @brief 将 groups_chunk 和 aggrs_chunk 写入到哈希表中, 哈希表中记录了聚合结果。
    */
   virtual RC add_chunk(Chunk &groups_chunk, Chunk &aggrs_chunk) = 0;
 
@@ -78,8 +78,7 @@ public:
     StandardHashTable::iterator end_;
     StandardHashTable::iterator it_;
   };
-  StandardAggregateHashTable(const std::vector<Expression *> aggregations)
-  {
+  StandardAggregateHashTable(const std::vector<Expression *> aggregations) {
     for (auto &expr : aggregations) {
       ASSERT(expr->type() == ExprType::AGGREGATION, "expect aggregate expression");
       auto *aggregation_expr = static_cast<AggregateExpr *>(expr);
@@ -90,6 +89,8 @@ public:
   virtual ~StandardAggregateHashTable() {}
 
   RC add_chunk(Chunk &groups_chunk, Chunk &aggrs_chunk) override;
+
+  int size() { return aggr_values_.size(); };
 
   StandardHashTable::iterator begin() { return aggr_values_.begin(); }
   StandardHashTable::iterator end() { return aggr_values_.end(); }
@@ -102,7 +103,7 @@ private:
 
 /**
  * @brief 线性探测哈希表实现
- * @note 当前只支持group by 列为 char/char(4) 类型，且聚合列为单列。
+ * @note 当前只支持 group by 列为 char/char(4) 类型，且聚合列为单列。
  */
 #ifdef USE_SIMD
 template <typename V>

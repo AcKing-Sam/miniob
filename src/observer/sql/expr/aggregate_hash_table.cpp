@@ -14,8 +14,32 @@ See the Mulan PSL v2 for more details. */
 
 RC StandardAggregateHashTable::add_chunk(Chunk &groups_chunk, Chunk &aggrs_chunk)
 {
-  // your code here
-  exit(-1);
+  for(int i = 0;i < groups_chunk.rows();i ++) {
+    std::vector<Value> group_vals, aggrs_vals;
+    for(int j = 0;j < groups_chunk.column_num();j ++) {
+      group_vals.push_back(groups_chunk.get_value(j, i));
+    }
+    for(int j = 0;j < aggrs_chunk.column_num();j ++) {
+      aggrs_vals.push_back(aggrs_chunk.get_value(j, i));
+    }
+    if(aggr_values_.count(group_vals) != 0) {
+      // aggregate the aggrs_vals here
+      for (size_t aggr_idx = 0; aggr_idx < aggrs_chunk.column_num(); aggr_idx++) {
+        if(aggr_values_[group_vals].at(aggr_idx).attr_type() == AttrType::INTS) {
+          int old_val = aggr_values_[group_vals].at(aggr_idx).get_int();
+          std::cout << "old val: " << old_val << " " << aggrs_vals[aggr_idx].get_float() << std::endl;
+          aggr_values_[group_vals].at(aggr_idx).set_int(aggrs_vals[aggr_idx].get_int() + old_val);
+        } else if(aggr_values_[group_vals].at(aggr_idx).attr_type() == AttrType::FLOATS) {
+          float old_val = aggr_values_[group_vals].at(aggr_idx).get_float();
+          std::cout << "old val: " << old_val << " " << aggrs_vals[aggr_idx].get_float() << std::endl;
+          aggr_values_[group_vals].at(aggr_idx).set_float(aggrs_vals[aggr_idx].get_float() + old_val);
+        }
+      }
+    } else {
+      aggr_values_[group_vals] = aggrs_vals;
+    }
+  }
+  return RC::SUCCESS;
 }
 
 void StandardAggregateHashTable::Scanner::open_scan()
