@@ -515,7 +515,6 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
 
   int prev_cols_len = 0;
   int column_num = page_header_->column_num;
-  int *column_index = reinterpret_cast<int *>(frame_->data() + page_header_->col_idx_offset);
   for (int i = 0; i < column_num; ++i) {
     int col_len = get_field_len(i);
     record.set_field(prev_cols_len / page_header_->record_capacity, col_len, get_field_data(rid.slot_num, i));
