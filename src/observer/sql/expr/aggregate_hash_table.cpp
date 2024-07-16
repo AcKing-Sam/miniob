@@ -332,7 +332,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   delete[] key;
   delete[] value;
 
-  resize_if_needed();
+  // resize_if_needed();
   /*
   int inv[SIMD_WIDTH];
   int off[SIMD_WIDTH];
