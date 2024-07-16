@@ -236,7 +236,6 @@ void LinearProbingAggregateHashTable<V>::resize_if_need()
 template <typename V>
 void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_values, int len)
 {
-  // your code here
   // inv (invalid) 表示是否有效，inv[i] = -1 表示有效，inv[i] = 0 表示无效。
   // key[SIMD_WIDTH], value[SIMD_WIDTH] 表示当前循环中处理的键值对。
   // off (offset) 表示线性探测冲突时的偏移量，key[i] 每次遇到冲突键，则 off[i]++，如果key[i] 已经完成聚合，则off[i] = 0，
@@ -283,24 +282,24 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       __m256i hash_vals = _mm256_setzero_si256();
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if (inv[j] != -1) {
-              int key = _mm256_extract_epi32(keys, j);
+              int key = mm256_extract_epi32_var_indx(keys, j);
               int hash_val = hash_function(key + off[j]);
               hash_vals = _mm256_insert_epi32(hash_vals, hash_val, j);
           }
       }
 
       // Gather operation
-      __m256i table_keys = _mm256_i32gather_epi32(input_keys, hash_vals, 4);
+      __m256i table_keys = _mm256_i32gather_epi32( , hash_vals, 4);
 
       // Update hash table
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if (inv[j] != -1) {
-              int key = _mm256_extract_epi32(keys, j);
-              int table_key = _mm256_extract_epi32(table_keys, j);
-              int hash_val = _mm256_extract_epi32(hash_vals, j);
+              int key = mm256_extract_epi32_var_indx(keys, j);
+              int table_key = mm256_extract_epi32_var_indx(table_keys, j);
+              int hash_val = mm256_extract_epi32_var_indx(hash_vals, j);
 
               if (table_key == key) {
-                  values_[hash_val] += _mm256_extract_epi32(values, j);
+                  values_[hash_val] += mm256_extract_epi32_var_indx(values, j);
                   inv[j] = -1; // Mark as done
                   off[j] = 0;
               } else {
