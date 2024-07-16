@@ -25,7 +25,7 @@ public:
       : group_by_exprs_(std::move(group_by_exprs)), ht_(expressions) {
         aggregate_expressions_ = expressions;
         value_expressions_.reserve(aggregate_expressions_.size());
-        ranges::for_each(aggregate_expressions_, [this](Expression *expr) {
+        std::ranges::for_each(aggregate_expressions_, [this](Expression *expr) {
           auto       *aggregate_expr = static_cast<AggregateExpr *>(expr);
           Expression *child_expr     = aggregate_expr->child().get();
           ASSERT(child_expr != nullptr, "aggregate expression must have a child expression");
