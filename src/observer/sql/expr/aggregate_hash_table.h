@@ -160,6 +160,10 @@ private:
 
   void resize_if_need();
 
+  int hash_function(int key) {
+    return (key % capacity_ + capacity_) % capacity_;
+  }
+
 private:
   static const int EMPTY_KEY;
   static const int DEFAULT_CAPACITY;

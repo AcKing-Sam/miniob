@@ -232,10 +232,6 @@ void LinearProbingAggregateHashTable<V>::resize_if_need()
   }
 }
 
-int hash_function(int key) {
-  return (key % capacity_ + capacity_) % capacity_;
-}
-
 template <typename V>
 void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_values, int len)
 {
