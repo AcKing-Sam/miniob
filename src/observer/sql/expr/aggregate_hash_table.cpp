@@ -405,7 +405,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
       ++i;
   }
 
-  resize_if_need();
+  // resize_if_need();
   */
 }
 
