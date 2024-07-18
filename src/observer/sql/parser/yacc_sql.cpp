@@ -105,7 +105,7 @@ bool init_date_value(Value* value, const char* v) {
       return false;
     }
     int tmp = y * 10000 + m * 100 + d;
-    if(tmp < 19800101 || tmp >= 20380301) {
+    if(tmp < 19700101 || tmp >= 20380301) {
       return false;
     }
     value->set_date(tmp);

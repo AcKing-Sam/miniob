@@ -509,7 +509,6 @@ select_stmt:        /*  select 语句的语法解析树*/
         delete $6;
       }
     }
-    | 
     ;
 calc_stmt:
     CALC expression_list
