@@ -156,7 +156,14 @@ std::string Value::to_string() const
       os << num_value_.int_value_;
     } break;
     case AttrType::DATES: {
-      os << num_value_.date_value_;
+      int date = num_value_.date_value_;
+      int year = date / 10000;             
+      int month = (date % 10000) / 100;    
+      int day = date % 100;                
+
+      os << year << '-' 
+          << (month < 10 ? "0" : "") << month << '-' 
+          << (day < 10 ? "0" : "") << day;
     } break;
     case AttrType::FLOATS: {
       os << common::double_to_str(num_value_.float_value_);
