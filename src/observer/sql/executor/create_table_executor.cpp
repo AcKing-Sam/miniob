@@ -21,8 +21,7 @@ See the Mulan PSL v2 for more details. */
 #include "sql/stmt/create_table_stmt.h"
 #include "storage/db/db.h"
 
-RC CreateTableExecutor::execute(SQLStageEvent *sql_event)
-{
+RC CreateTableExecutor::execute(SQLStageEvent *sql_event) {
   Stmt    *stmt    = sql_event->stmt();
   Session *session = sql_event->session_event()->session();
   ASSERT(stmt->type() == StmtType::CREATE_TABLE,
