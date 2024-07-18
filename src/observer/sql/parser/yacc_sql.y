@@ -28,17 +28,19 @@ bool check_date(int y, int m, int d) {
         && (d > 0)&&(d <= ((m==2 && leap)?1:0) + mon[m]);
 }
 
-void init_date_value(Value* value, const char* v) {
+bool init_date_value(Value* value, const char* v) {
     int y, m, d;
     sscanf(v, "%d-%d-%d", &y, &m, &d);
-    bool b = check_date(y,m,d);
+    bool b = check_date(y, m, d);
     if(!b) {
-      // printf("check failed!\n");
-      return;
+      return false;
     }
-    value->set_date(y * 10000 + m * 100 + d);
-    printf("value init %d\n", y * 10000 + m * 100 + d);
-    return;
+    int tmp = y * 10000 + m * 100 + d;
+    if(tmp < 19800101 || tmp >= 20380301) {
+      return false;
+    }
+    value->set_date(tmp);
+    return true;
 }
 
 int yyerror(YYLTYPE *llocp, const char *sql_string, ParsedSqlResult *sql_result, yyscan_t scanner, const char *msg)
@@ -429,7 +431,11 @@ value:
     | DATE_STR {
       Value* val = new Value();
       char* tmp = common::substr($1, 1, strlen($1) - 2);
-      init_date_value(val, tmp);
+
+      if(!init_date_value(val, tmp)) {
+        yyerror(&@1, yyget_text(scanner), sql_result, scanner, "date type parse fail!");
+      }
+      
       $$ = val;
       free(tmp);
       free($1);
