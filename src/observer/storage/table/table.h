@@ -80,6 +80,8 @@ public:
   RC delete_record(const RID &rid);
   RC get_record(const RID &rid, Record &record);
 
+  RC destroy(const char* dir);
+
   RC recover_insert_record(Record &record);
 
   // TODO refactor

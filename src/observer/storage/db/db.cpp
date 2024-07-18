@@ -170,6 +170,22 @@ Table *Db::find_table(const char *table_name) const
   return nullptr;
 }
 
+RC Db::drop_table(const char *table_name) {
+  auto it = find_table(table_name);
+
+  if(it == nullptr) {
+    return RC::EMPTY;
+  }
+  RC rc = it->destroy(path_.c_str());
+  if(rc != RC::SUCCESS) {
+    return rc;
+  }
+
+  opened_tables_.erase(table_name);
+  delete it;
+  return RC::SUCCESS;
+}
+
 Table *Db::find_table(int32_t table_id) const
 {
   for (auto pair : opened_tables_) {
