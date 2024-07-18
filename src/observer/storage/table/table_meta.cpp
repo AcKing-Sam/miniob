@@ -78,6 +78,7 @@ RC TableMeta::init(int32_t table_id, const char *name, const std::vector<FieldMe
 
   for (size_t i = 0; i < attributes.size(); i++) {
     const AttrInfoSqlNode &attr_info = attributes[i];
+    // std::cout << "attribute type is: " << (int)attr_info.type << std::endl; 
     // `i` is the col_id of fields[i]
     rc = fields_[i + trx_field_num].init(
       attr_info.name.c_str(), attr_info.type, field_offset, attr_info.length, true /*visible*/, i);

@@ -20,6 +20,27 @@ string token_name(const char *sql_string, YYLTYPE *llocp)
   return string(sql_string + llocp->first_column, llocp->last_column - llocp->first_column + 1);
 }
 
+bool check_date(int y, int m, int d) {
+    static int mon[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    bool leap = (y % 400 == 0 || (y % 100 && y % 4 == 0));
+    return y > 0
+        && (m > 0)&&(m <= 12)
+        && (d > 0)&&(d <= ((m==2 && leap)?1:0) + mon[m]);
+}
+
+void init_date_value(Value* value, const char* v) {
+    int y, m, d;
+    sscanf(v, "%d-%d-%d", &y, &m, &d);
+    bool b = check_date(y,m,d);
+    if(!b) {
+      // printf("check failed!\n");
+      return;
+    }
+    value->set_date(y * 10000 + m * 100 + d);
+    printf("value init %d\n", y * 10000 + m * 100 + d);
+    return;
+}
+
 int yyerror(YYLTYPE *llocp, const char *sql_string, ParsedSqlResult *sql_result, yyscan_t scanner, const char *msg)
 {
   std::unique_ptr<ParsedSqlNode> error_sql_node = std::make_unique<ParsedSqlNode>(SCF_ERROR);
@@ -89,6 +110,7 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
         INT_T
         STRING_T
         FLOAT_T
+        DATE_T
         HELP
         EXIT
         DOT //QUOTE
@@ -134,6 +156,7 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
 
 %token <number> NUMBER
 %token <floats> FLOAT
+%token <string> DATE_STR
 %token <string> ID
 %token <string> SSS
 //非终结符
@@ -348,6 +371,7 @@ attr_def:
     {
       $$ = new AttrInfoSqlNode;
       $$->type = (AttrType)$2;
+      // printf("test %d\n", $$->type);
       $$->name = $1;
       $$->length = 4;
       free($1);
@@ -360,6 +384,7 @@ type:
     INT_T      { $$ = static_cast<int>(AttrType::INTS); }
     | STRING_T { $$ = static_cast<int>(AttrType::CHARS); }
     | FLOAT_T  { $$ = static_cast<int>(AttrType::FLOATS); }
+    | DATE_T  { $$ = static_cast<int>(AttrType::DATES);}
     ;
 insert_stmt:        /*insert   语句的语法解析树*/
     INSERT INTO ID VALUES LBRACE value value_list RBRACE 
@@ -397,11 +422,19 @@ value:
       $$ = new Value((int)$1);
       @$ = @1;
     }
-    |FLOAT {
+    | FLOAT {
       $$ = new Value((float)$1);
       @$ = @1;
     }
-    |SSS {
+    | DATE_STR {
+      Value* val = new Value();
+      char* tmp = common::substr($1, 1, strlen($1) - 2);
+      init_date_value(val, tmp);
+      $$ = val;
+      free(tmp);
+      free($1);
+    }
+    | SSS {
       char *tmp = common::substr($1,1,strlen($1)-2);
       $$ = new Value(tmp);
       free(tmp);

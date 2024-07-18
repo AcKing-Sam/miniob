@@ -27,6 +27,7 @@ enum class AttrType
   INTS,      ///< 整数类型(4字节)
   FLOATS,    ///< 浮点数类型(4字节)
   BOOLEANS,  ///< boolean类型，当前不是由parser解析出来的，是程序内部使用的
+  DATES,      ///< 格式：xxxx-xx-xx
 };
 
 const char *attr_type_to_string(AttrType type);
@@ -58,6 +59,7 @@ public:
   void set_float(float val);
   void set_boolean(bool val);
   void set_string(const char *s, int len = 0);
+  void set_date(int val);
   void set_value(const Value &value);
 
   std::string to_string() const;
@@ -75,6 +77,7 @@ public:
    * 如果当前的类型与期望获取的类型不符，就会执行转换操作
    */
   int         get_int() const;
+  int         get_date() const;
   float       get_float() const;
   std::string get_string() const;
   bool        get_boolean() const;
@@ -86,6 +89,7 @@ private:
   union
   {
     int   int_value_;
+    int   date_value_;
     float float_value_;
     bool  bool_value_;
   } num_value_;

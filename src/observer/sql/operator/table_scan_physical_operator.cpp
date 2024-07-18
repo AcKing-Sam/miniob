@@ -23,6 +23,7 @@ RC TableScanPhysicalOperator::open(Trx *trx)
   RC rc = table_->get_record_scanner(record_scanner_, trx, mode_);
   if (rc == RC::SUCCESS) {
     tuple_.set_schema(table_, table_->table_meta().field_metas());
+    // std::vector<FieldMeta>* tt = table_->table_meta().field_metas();
   }
   trx_ = trx;
   return rc;
@@ -35,7 +36,6 @@ RC TableScanPhysicalOperator::next()
   bool filter_result = false;
   while (OB_SUCC(rc = record_scanner_.next(current_record_))) {
     LOG_TRACE("got a record. rid=%s", current_record_.rid().to_string().c_str());
-    
     tuple_.set_record(&current_record_);
     rc = filter(tuple_, filter_result);
     if (rc != RC::SUCCESS) {

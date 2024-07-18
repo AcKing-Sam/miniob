@@ -181,6 +181,7 @@ public:
     this->speces_.clear();
     this->speces_.reserve(fields->size());
     for (const FieldMeta &field : *fields) {
+      // std::cout << (int)field.type() << std::endl;
       speces_.push_back(new FieldExpr(table, &field));
     }
   }
@@ -197,7 +198,9 @@ public:
     FieldExpr       *field_expr = speces_[index];
     const FieldMeta *field_meta = field_expr->field().meta();
     cell.set_type(field_meta->type());
+    // std::cout << "type: " << (int)field_meta->type() << std::endl;
     cell.set_data(this->record_->data() + field_meta->offset(), field_meta->len());
+    // std::cout << "data: " << *(int*)this->record_->data() << std::endl;
     return RC::SUCCESS;
   }
 

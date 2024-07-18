@@ -31,12 +31,6 @@ public:
           ASSERT(child_expr != nullptr, "aggregate expression must have a child expression");
           value_expressions_.emplace_back(child_expr);
         }
-        // ranges::for_each(aggregate_expressions_, [this](Expression *expr) {
-        //   auto       *aggregate_expr = static_cast<AggregateExpr *>(expr);
-        //   Expression *child_expr     = aggregate_expr->child().get();
-        //   ASSERT(child_expr != nullptr, "aggregate expression must have a child expression");
-        //   value_expressions_.emplace_back(child_expr);
-        // });
       };
 
   virtual ~GroupByVecPhysicalOperator() = default;
@@ -63,6 +57,7 @@ public:
         group_chunks.column_ptr(col_id)->append(col.data(), col.count());
         col_id ++;
       }
+
       col_id = 0;
       for(auto aggrs_expr : value_expressions_) {
         Column col;
@@ -71,6 +66,7 @@ public:
         aggrs_chunks.column_ptr(col_id)->append(col.data(), col.count());
         col_id ++;
       }
+
       rc = ht_.add_chunk(group_chunks, aggrs_chunks);
       if (OB_FAIL(rc)) {
         LOG_INFO("failed to add chunks. rc=%s", strrc(rc));

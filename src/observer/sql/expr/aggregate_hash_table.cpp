@@ -20,9 +20,11 @@ RC StandardAggregateHashTable::add_chunk(Chunk &groups_chunk, Chunk &aggrs_chunk
       group_vals.push_back(groups_chunk.get_value(j, i));
     }
     for(int j = 0;j < aggrs_chunk.column_num();j ++) {
-      std::cout << aggrs_chunk.column_num() << " " << aggrs_chunk.rows() << " " << j << " " << i << std::endl;
+      // std::cout << aggrs_chunk.column_num() << " " << aggrs_chunk.rows() << " " << j << " " << i << std::endl;
       aggrs_vals.push_back(aggrs_chunk.get_value(j, i));
     }
+    
+    // do aggregation
     if(aggr_values_.count(group_vals) != 0) {
       // aggregate the aggrs_vals here
       for (size_t aggr_idx = 0; aggr_idx < aggrs_chunk.column_num(); aggr_idx++) {
