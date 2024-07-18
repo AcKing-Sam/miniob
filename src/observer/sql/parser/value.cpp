@@ -160,7 +160,6 @@ std::string Value::to_string() const
       int year = date / 10000;             
       int month = (date % 10000) / 100;    
       int day = date % 100;                
-
       os << year << '-' 
           << (month < 10 ? "0" : "") << month << '-' 
           << (day < 10 ? "0" : "") << day;
