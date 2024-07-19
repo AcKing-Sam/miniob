@@ -28,17 +28,27 @@ class UpdateStmt : public Stmt
 public:
   UpdateStmt() = default;
   UpdateStmt(Table *table, Value *values, int value_amount);
+  ~UpdateStmt() override;
 
 public:
   static RC create(Db *db, const UpdateSqlNode &update_sql, Stmt *&stmt);
 
+  StmtType type() const override { return StmtType::UPDATE; }
+
 public:
   Table *table() const { return table_; }
-  Value *values() const { return values_; }
+  Value *value() const { return value_; }
   int    value_amount() const { return value_amount_; }
+
+  void set_table(Table* t) {table_ = t;}
+  void set_value(const Value& val) {
+    value_ = new Value(val);
+  }
+  void set_filter(FilterStmt* f) {filter_stmt_ = f;}
 
 private:
   Table *table_        = nullptr;
-  Value *values_       = nullptr;
+  Value *value_       = nullptr;
   int    value_amount_ = 0;
+  FilterStmt  *filter_stmt_ = nullptr;
 };
