@@ -48,6 +48,19 @@ RC UpdateStmt::create(Db *db, const UpdateSqlNode &update_sql, Stmt *&stmt)
     return RC::SCHEMA_TABLE_NOT_EXIST;
   }
 
+  bool found_column = false;
+  // check whether the column exists
+  auto field_metas = *table->table_meta().field_metas();
+  for(auto mt : field_metas) {
+    if(mt.name() == update_sql.attribute_name) {
+      found_column = true;
+      break;
+    }
+  }
+  if(!found_column) {
+    return RC::INVALID_ARGUMENT;
+  }
+
   std::unordered_map<std::string, Table *> table_map;
   table_map.insert(std::pair<std::string, Table *>(std::string(table_name), table));
 
