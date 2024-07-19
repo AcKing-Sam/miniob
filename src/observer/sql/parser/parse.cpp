@@ -16,6 +16,8 @@ See the Mulan PSL v2 for more details. */
 #include "common/log/log.h"
 #include "sql/expr/expression.h"
 
+bool parse_success_ = true;
+
 RC parse(char *st, ParsedSqlNode *sqln);
 
 ParsedSqlNode::ParsedSqlNode() : flag(SCF_ERROR) {}
@@ -32,7 +34,11 @@ void ParsedSqlResult::add_sql_node(std::unique_ptr<ParsedSqlNode> sql_node)
 int sql_parse(const char *st, ParsedSqlResult *sql_result);
 
 RC parse(const char *st, ParsedSqlResult *sql_result)
-{
+{ 
+  parse_success_ = true;
   sql_parse(st, sql_result);
+  if(!parse_success_) {
+    return RC::SQL_SYNTAX;
+  }
   return RC::SUCCESS;
 }

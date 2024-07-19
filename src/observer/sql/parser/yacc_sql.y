@@ -12,8 +12,11 @@
 #include "sql/parser/yacc_sql.hpp"
 #include "sql/parser/lex_sql.h"
 #include "sql/expr/expression.h"
+#include "sql/parser/parse.h"
 
 using namespace std;
+
+extern bool parse_success_;
 
 string token_name(const char *sql_string, YYLTYPE *llocp)
 {
@@ -23,18 +26,24 @@ string token_name(const char *sql_string, YYLTYPE *llocp)
 bool check_date(int y, int m, int d) {
     static int mon[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     bool leap = (y % 400 == 0 || (y % 100 && y % 4 == 0));
+    if(y <= 0) return false;
+    if(m <= 0 || m > 12) {
+      return false;
+    }
     return y > 0
-        && (m > 0)&&(m <= 12)
-        && (d > 0)&&(d <= ((m==2 && leap)?1:0) + mon[m]);
+        && (m > 0) && (m <= 12)
+        && (d > 0) && (d <= ((m==2 && leap)? 1 : 0) + mon[m]);
 }
 
 bool init_date_value(Value* value, const char* v) {
     int y, m, d;
     sscanf(v, "%d-%d-%d", &y, &m, &d);
+    // std::cout << "666 " << y << " " << m << " " << d << std::endl;
     bool b = check_date(y, m, d);
     if(!b) {
       return false;
     }
+    // std::cout << "888 " << y << " " << m << " " << d << std::endl;
     int tmp = y * 10000 + m * 100 + d;
     value->set_date(tmp);
     return true;
@@ -428,9 +437,8 @@ value:
     | DATE_STR {
       Value* val = new Value();
       char* tmp = common::substr($1, 1, strlen($1) - 2);
-
       if(!init_date_value(val, tmp)) {
-        yyerror(&@1, yyget_text(scanner), sql_result, scanner, "date type parse fail!");
+        parse_success_ = false;
       }
       
       $$ = val;
@@ -438,7 +446,7 @@ value:
       free($1);
     }
     | SSS {
-      char *tmp = common::substr($1,1,strlen($1)-2);
+      char *tmp = common::substr($1, 1, strlen($1) - 2);
       $$ = new Value(tmp);
       free(tmp);
       free($1);

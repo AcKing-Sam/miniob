@@ -41,10 +41,19 @@ RC UpdatePhysicalOperator::open(Trx *trx)
         // construct the new record
         Record new_record;
         table_->get_record(record.rid(), new_record);
+        bool found = false;
         for(auto field : row_tuple->get_fields()) {
             if(field->field_name() == attribute_name_) {
+                found = true;
+                if(field->field().meta()->type() != value_->attr_type()) {
+                  return RC::INVALID_ARGUMENT;
+                }
                 new_record.set_field(field->field().meta()->offset(), field->field().meta()->len(), (char *)value_->data());
+                break;
             }
+        }
+        if(!found) {
+          return RC::INVALID_ARGUMENT;
         }
         new_records_.emplace_back(std::move(new_record));
     }

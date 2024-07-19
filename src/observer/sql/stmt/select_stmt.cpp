@@ -100,6 +100,8 @@ RC SelectStmt::create(Db *db, SelectSqlNode &select_sql, Stmt *&stmt)
     return rc;
   }
 
+  std::cout << "select's filter stmt" << std::endl;
+
   // everything alright
   SelectStmt *select_stmt = new SelectStmt();
 
