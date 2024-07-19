@@ -94,6 +94,6 @@ SELECT avg(id2) FROM aggregation_func;
 FAILURE
 
 9. SELECT MANY AGGREGATION
-SELECT min(num),max(num),avg(num) FROM aggregation_func;
+SELECT min(num), max(num), avg(num) FROM aggregation_func;
 MIN(NUM) | MAX(NUM) | AVG(NUM)
 12 | 18 | 15

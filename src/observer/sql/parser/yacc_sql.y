@@ -121,6 +121,7 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
         DATE_T
         HELP
         EXIT
+        LIKE_STR
         DOT //QUOTE
         INTO
         VALUES
@@ -702,6 +703,7 @@ comp_op:
     | LE { $$ = LESS_EQUAL; }
     | GE { $$ = GREAT_EQUAL; }
     | NE { $$ = NOT_EQUAL; }
+    | LIKE_STR { $$ = LIKE; }
     ;
 
 // your code here

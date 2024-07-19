@@ -126,9 +126,28 @@ ComparisonExpr::ComparisonExpr(CompOp comp, unique_ptr<Expression> left, unique_
 
 ComparisonExpr::~ComparisonExpr() {}
 
+bool is_like(const char* text, const char* pattern) {
+    if (*pattern == '\0') {
+        return *text == '\0';
+    }
+    if (*pattern == '%') {
+        return is_like(text, pattern + 1) || (*text != '\0' && is_like(text + 1, pattern));
+    }
+    if (*pattern == '_' || *pattern == *text) {
+        return *text != '\0' && is_like(text + 1, pattern + 1);
+    }
+    return false;
+}
+
 RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &result) const
 {
   RC  rc         = RC::SUCCESS;
+
+  if(comp() == LIKE) {
+    result = is_like(left.data(), right.data()) || is_like(right.data(), left.data());
+    return rc;
+  }
+
   int cmp_result = left.compare(right);
   result         = false;
   switch (comp_) {
@@ -149,6 +168,9 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
     } break;
     case GREAT_THAN: {
       result = (cmp_result > 0);
+    } break;
+    case LIKE: {
+      result = (cmp_result == 0);
     } break;
     default: {
       LOG_WARN("unsupported comparison. %d", comp_);

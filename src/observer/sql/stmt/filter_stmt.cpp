@@ -37,7 +37,6 @@ RC FilterStmt::create(Db *db, Table *default_table, std::unordered_map<std::stri
   for (int i = 0; i < condition_num; i++) {
     FilterUnit *filter_unit = nullptr;
     rc = create_filter_unit(db, default_table, tables, conditions[i], filter_unit);
-    
     if (rc != RC::SUCCESS) {
       delete tmp_stmt;
       LOG_WARN("failed to create filter unit. condition index=%d", i);
@@ -131,11 +130,18 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
 
   filter_unit->set_comp(comp);
 
-  // 检查两个类型是否能够比较
-  // need to judge date type here
-  // for example, WHERE c1='2000-12-07', c1(date type)
+  // check compare is valid here
   if(lt == AttrType::DATES && rt == AttrType::CHARS) {
     return RC::INVALID_ARGUMENT;
+  }
+  // here, not support "col LIKE col" and "chars LIKE chars".
+  if(condition.comp == LIKE) {
+    if(!condition.right_is_attr && !condition.left_is_attr) {
+      return RC::INVALID_ARGUMENT;
+    }
+    if(condition.right_is_attr && condition.left_is_attr) {
+      return RC::INVALID_ARGUMENT;
+    }
   }
 
   return rc;

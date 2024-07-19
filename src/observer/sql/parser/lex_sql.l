@@ -84,6 +84,7 @@ QUOTE            [\'\"]
 
 ";"                                     RETURN_TOKEN(SEMICOLON);
 {DOT}                                   RETURN_TOKEN(DOT);
+LIKE                                    RETURN_TOKEN(LIKE_STR);
 EXIT                                    RETURN_TOKEN(EXIT);
 HELP                                    RETURN_TOKEN(HELP);
 DESC                                    RETURN_TOKEN(DESC);
@@ -133,6 +134,7 @@ FORMAT                                  RETURN_TOKEN(FORMAT);
 "<"                                     RETURN_TOKEN(LT);
 ">="                                    RETURN_TOKEN(GE);
 ">"                                     RETURN_TOKEN(GT);
+
 
 "+" |
 "-" |
