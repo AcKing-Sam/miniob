@@ -46,7 +46,14 @@ RC UpdatePhysicalOperator::open(Trx *trx)
             if(field->field_name() == attribute_name_) {
                 found = true;
                 if(field->field().meta()->type() != value_->attr_type()) {
+                  // std::cout << "type mismatch!" << std::endl;
                   return RC::INVALID_ARGUMENT;
+                }
+                if(value_->attr_type() == AttrType::CHARS) {
+                  if(value_->length() > field->field().meta()->len()) {
+                    // std::cout << "char type, length mismatch!" << std::endl;
+                    return RC::INVALID_ARGUMENT;
+                  }
                 }
                 new_record.set_field(field->field().meta()->offset(), field->field().meta()->len(), (char *)value_->data());
                 break;

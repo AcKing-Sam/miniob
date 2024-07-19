@@ -16,7 +16,6 @@ See the Mulan PSL v2 for more details. */
 #include <string>
 
 #include "sql/executor/execute_stage.h"
-#include "event/sql_debug.h"
 #include "common/log/log.h"
 #include "event/session_event.h"
 #include "event/sql_event.h"
