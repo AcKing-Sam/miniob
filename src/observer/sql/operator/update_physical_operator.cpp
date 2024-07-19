@@ -26,17 +26,38 @@ RC UpdatePhysicalOperator::open(Trx *trx)
       return rc;
     }
 
+    bool filter_result = false;
     RowTuple *row_tuple = static_cast<RowTuple *>(tuple);
-    Record   &record    = row_tuple->record();
-    records_.emplace_back(std::move(record));
+    rc = filter(*row_tuple, filter_result);
+
+    if (rc != RC::SUCCESS) {
+      LOG_TRACE("record filtered failed=%s", strrc(rc));
+      return rc;
+    }
+
+    if (filter_result) {
+        Record   &record    = row_tuple->record();
+        records_.emplace_back(std::move(record));
+        // construct the new record
+        Record new_record;
+        table_->get_record(record.rid(), new_record);
+        for(auto field : row_tuple->get_fields()) {
+            if(field->field_name() == attribute_name_) {
+                new_record.set_field(field->field().meta()->offset(), field->field().meta()->len(), (char *)value_->data());
+            }
+        }
+        new_records_.emplace_back(std::move(new_record));
+    }
   }
 
   child->close();
 
   // 先收集记录再更新
   // 记录的有效性由事务来保证，如果事务不保证删除的有效性，那说明此事务类型不支持并发控制，比如 VacuousTrx
-  for (Record &record : records_) {
-    rc = trx_->update_record(table_, record);
+  for (int i = 0;i < records_.size();i ++) {
+    auto& record = records_[i];
+    auto new_record = new_records_[i];
+    rc = trx_->update_record(table_, record, new_record);
     if (rc != RC::SUCCESS) {
       LOG_WARN("failed to update record: %s", strrc(rc));
       return rc;
@@ -54,4 +75,29 @@ RC UpdatePhysicalOperator::next()
 RC UpdatePhysicalOperator::close()
 {
   return RC::SUCCESS;
+}
+
+void UpdatePhysicalOperator::set_predicates(vector<unique_ptr<Expression>> &&exprs) {
+  predicates_ = std::move(exprs);
+}
+
+RC UpdatePhysicalOperator::filter(RowTuple &tuple, bool &result)
+{
+  RC    rc = RC::SUCCESS;
+  Value value;
+  for (unique_ptr<Expression> &expr : predicates_) {
+    rc = expr->get_value(tuple, value);
+    if (rc != RC::SUCCESS) {
+      return rc;
+    }
+
+    bool tmp_result = value.get_boolean();
+    if (!tmp_result) {
+      result = false;
+      return rc;
+    }
+  }
+
+  result = true;
+  return rc;
 }

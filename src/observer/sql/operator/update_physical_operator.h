@@ -12,7 +12,7 @@ class UpdateStmt;
 class UpdatePhysicalOperator : public PhysicalOperator
 {
 public:
-  UpdatePhysicalOperator(Table *table) : table_(table) {}
+  UpdatePhysicalOperator(Table *table, Value* val, std::string str) : table_(table), value_(val), attribute_name_(str) {}
 
   virtual ~UpdatePhysicalOperator() = default;
 
@@ -21,11 +21,21 @@ public:
   RC open(Trx *trx) override;
   RC next() override;
   RC close() override;
-
-  Tuple *current_tuple() override { return nullptr; }
+  void set_predicates(std::vector<std::unique_ptr<Expression>> &&exprs);
 
 private:
+
+  RC filter(RowTuple &tuple, bool &result);
+
   Table              *table_ = nullptr;
   Trx                *trx_   = nullptr;
+
+  // value want to update
+  Value* value_ = nullptr;
+  // attribute want to update
+  std::string attribute_name_;
+
   std::vector<Record> records_;
+  std::vector<Record> new_records_;
+  std::vector<std::unique_ptr<Expression>> predicates_;
 };

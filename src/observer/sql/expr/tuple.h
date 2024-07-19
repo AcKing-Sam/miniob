@@ -229,6 +229,8 @@ public:
     return RC::NOTFOUND;
   }
 
+  std::vector<FieldExpr *>& get_fields() { return speces_; }
+
 #if 0
   RC cell_spec_at(int index, const TupleCellSpec *&spec) const override
   {

@@ -148,7 +148,7 @@ RC MvccTrx::insert_record(Table *table, Record &record)
   return rc;
 }
 
-RC MvccTrx::update_record(Table *table, Record &record){
+RC MvccTrx::update_record(Table *table, Record &record, Record new_record){
   return RC::SUCCESS;
 }
 

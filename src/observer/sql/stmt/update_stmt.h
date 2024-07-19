@@ -38,17 +38,21 @@ public:
 public:
   Table *table() const { return table_; }
   Value *value() const { return value_; }
+  FilterStmt* filter_stmt() const { return filter_stmt_; }
   int    value_amount() const { return value_amount_; }
+  std::string attribute() const { return attribute_name_; }
 
   void set_table(Table* t) {table_ = t;}
   void set_value(const Value& val) {
     value_ = new Value(val);
   }
   void set_filter(FilterStmt* f) {filter_stmt_ = f;}
+  void set_attribute(std::string str) {attribute_name_ = str;}
 
 private:
   Table *table_        = nullptr;
   Value *value_       = nullptr;
+  std::string attribute_name_;
   int    value_amount_ = 0;
   FilterStmt  *filter_stmt_ = nullptr;
 };

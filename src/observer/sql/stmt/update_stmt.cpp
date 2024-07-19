@@ -63,6 +63,7 @@ RC UpdateStmt::create(Db *db, const UpdateSqlNode &update_sql, Stmt *&stmt)
   st->set_filter(filter_stmt);
   st->set_table(table);
   st->set_value(update_sql.value);
+  st->set_attribute(update_sql.attribute_name);
   stmt = st;
   return rc;
 }
