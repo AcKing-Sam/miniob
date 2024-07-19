@@ -22,7 +22,7 @@ AggregateVecPhysicalOperator::AggregateVecPhysicalOperator(vector<Expression *> 
 {
   aggregate_expressions_ = std::move(expressions);
   value_expressions_.reserve(aggregate_expressions_.size());
-
+  // todo
   for(auto expr : aggregate_expressions_) {
     auto       *aggregate_expr = static_cast<AggregateExpr *>(expr);
     Expression *child_expr     = aggregate_expr->child().get();
@@ -88,6 +88,7 @@ RC AggregateVecPhysicalOperator::open(Trx *trx)
   if (rc == RC::RECORD_EOF) {
     rc = RC::SUCCESS;
   }
+
   flag_ = false;
   return rc;
 }
@@ -109,19 +110,14 @@ RC AggregateVecPhysicalOperator::next(Chunk &chunk)
     auto *aggregate_expr = static_cast<AggregateExpr *>(aggregate_expressions_[aggr_idx]);
     if (aggregate_expr->aggregate_type() == AggregateExpr::Type::SUM) {
       if (aggregate_expr->value_type() == AttrType::INTS) {
-        // rc = output_chunk_.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
         chunk.add_column(make_unique<Column>(AttrType::INTS, sizeof(int)), aggr_idx);
         chunk.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
-        // std::cout << *(int *)aggr_values_.at(aggr_idx) << std::endl;
       } else if (aggregate_expr->value_type() == AttrType::FLOATS) {
-        // rc = output_chunk_.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
         chunk.add_column(make_unique<Column>(AttrType::FLOATS, sizeof(float)), aggr_idx);
         chunk.column_ptr(aggr_idx)->append_one((char *)aggr_values_.at(aggr_idx));
-        // std::cout << *(float *)aggr_values_.at(aggr_idx) << std::endl;
       }
     }
   }
-  std::cout << "agg vec " << chunk.column_num() << std::endl;
   if(rc == RC::SUCCESS) {
     flag_ = true;
     return RC::SUCCESS;
@@ -133,7 +129,6 @@ RC AggregateVecPhysicalOperator::close()
 {
   children_[0]->close();
   flag_ = false;
-  //output_chunk_.reset();
   LOG_INFO("close group by operator");
   return RC::SUCCESS;
 }

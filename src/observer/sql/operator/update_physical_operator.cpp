@@ -36,7 +36,7 @@ RC UpdatePhysicalOperator::open(Trx *trx)
     }
 
     if (filter_result) {
-        Record   &record    = row_tuple->record();
+        Record   &record = row_tuple->record();
         records_.emplace_back(std::move(record));
         // construct the new record
         Record new_record;
