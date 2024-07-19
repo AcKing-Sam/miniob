@@ -16,7 +16,7 @@ See the Mulan PSL v2 for more details. */
 #include <string>
 
 #include "sql/executor/execute_stage.h"
-
+#include "event/sql_debug.h"
 #include "common/log/log.h"
 #include "event/session_event.h"
 #include "event/sql_event.h"
@@ -41,6 +41,7 @@ RC ExecuteStage::handle_request(SQLStageEvent *sql_event)
   SessionEvent *session_event = sql_event->session_event();
 
   Stmt *stmt = sql_event->stmt();
+
   if (stmt != nullptr) {
     CommandExecutor command_executor;
     rc = command_executor.execute(sql_event);
