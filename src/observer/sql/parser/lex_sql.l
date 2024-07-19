@@ -85,6 +85,7 @@ QUOTE            [\'\"]
 ";"                                     RETURN_TOKEN(SEMICOLON);
 {DOT}                                   RETURN_TOKEN(DOT);
 LIKE                                    RETURN_TOKEN(LIKE_STR);
+"NOT LIKE"                              RETURN_TOKEN(NOT_LIKE_STR);
 EXIT                                    RETURN_TOKEN(EXIT);
 HELP                                    RETURN_TOKEN(HELP);
 DESC                                    RETURN_TOKEN(DESC);

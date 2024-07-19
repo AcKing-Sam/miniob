@@ -122,6 +122,7 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
         HELP
         EXIT
         LIKE_STR
+        NOT_LIKE_STR
         DOT //QUOTE
         INTO
         VALUES
@@ -704,6 +705,7 @@ comp_op:
     | GE { $$ = GREAT_EQUAL; }
     | NE { $$ = NOT_EQUAL; }
     | LIKE_STR { $$ = LIKE; }
+    | NOT_LIKE_STR { $$ = NOT_LIKE; }
     ;
 
 // your code here

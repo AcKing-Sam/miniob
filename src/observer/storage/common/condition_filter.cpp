@@ -117,19 +117,6 @@ RC DefaultConditionFilter::init(Table &table, const ConditionSqlNode &condition)
   return init(left, right, type_left, condition.comp);
 }
 
-// bool is_like(const char* text, const char* pattern) {
-//     if (*pattern == '\0') {
-//         return *text == '\0';
-//     }
-//     if (*pattern == '%') {
-//         return is_like(text, pattern + 1) || (*text != '\0' && is_like(text + 1, pattern));
-//     }
-//     if (*pattern == '_' || *pattern == *text) {
-//         return *text != '\0' && is_like(text + 1, pattern + 1);
-//     }
-//     return false;
-// }
-
 bool DefaultConditionFilter::filter(const Record &rec) const
 {
   Value left_value;
@@ -148,14 +135,6 @@ bool DefaultConditionFilter::filter(const Record &rec) const
   } else {
     right_value.set_value(right_.value);
   }
-
-  // if(comp_op_ == LIKE) {
-  //   if(left_.is_attr) {
-  //     return is_like(left_value.data(), right_value.data());
-  //   } else {
-  //     return is_like(right_value.data(), left_value.data());
-  //   }
-  // }
 
   int cmp_result = left_value.compare(right_value);
 

@@ -146,6 +146,9 @@ RC ComparisonExpr::compare_value(const Value &left, const Value &right, bool &re
   if(comp() == LIKE) {
     result = is_like(left.data(), right.data()) || is_like(right.data(), left.data());
     return rc;
+  } else if(comp() == NOT_LIKE) {
+    result = (!is_like(left.data(), right.data()) && !is_like(right.data(), left.data()));
+    return rc;
   }
 
   int cmp_result = left.compare(right);

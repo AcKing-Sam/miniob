@@ -135,7 +135,7 @@ RC FilterStmt::create_filter_unit(Db *db, Table *default_table, std::unordered_m
     return RC::INVALID_ARGUMENT;
   }
   // here, not support "col LIKE col" and "chars LIKE chars".
-  if(condition.comp == LIKE) {
+  if(condition.comp == LIKE || condition.comp == NOT_LIKE) {
     if(!condition.right_is_attr && !condition.left_is_attr) {
       return RC::INVALID_ARGUMENT;
     }
