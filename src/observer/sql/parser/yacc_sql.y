@@ -38,12 +38,10 @@ bool check_date(int y, int m, int d) {
 bool init_date_value(Value* value, const char* v) {
     int y, m, d;
     sscanf(v, "%d-%d-%d", &y, &m, &d);
-    // std::cout << "666 " << y << " " << m << " " << d << std::endl;
     bool b = check_date(y, m, d);
     if(!b) {
       return false;
     }
-    // std::cout << "888 " << y << " " << m << " " << d << std::endl;
     int tmp = y * 10000 + m * 100 + d;
     value->set_date(tmp);
     return true;
@@ -121,6 +119,11 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
         DATE_T
         HELP
         EXIT
+        SUM_STR
+        MIN_STR
+        MAX_STR
+        AVG_STR
+        COUNT_STR
         LIKE_STR
         NOT_LIKE_STR
         DOT //QUOTE
@@ -162,6 +165,7 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
   char *                                     string;
   int                                        number;
   float                                      floats;
+  char*                                      agg_func;
 }
 
 %token <number> NUMBER
@@ -172,6 +176,7 @@ UnboundAggregateExpr *create_aggregate_expression(const char *aggregate_name,
 //非终结符
 
 /** type 定义了各种解析后的结果输出的是什么类型。类型对应了 union 中的定义的成员变量名称 **/
+%type <agg_func>            agg_func
 %type <number>              type
 %type <condition>           condition
 %type <value>               value
@@ -442,7 +447,6 @@ value:
       if(!init_date_value(val, tmp)) {
         parse_success_ = false;
       }
-      
       $$ = val;
       free(tmp);
       free($1);
@@ -577,9 +581,41 @@ expression:
     | '*' {
       $$ = new StarExpr();
     }
-    | ID LBRACE expression RBRACE {
+    | agg_func LBRACE expression RBRACE {
       $$ = create_aggregate_expression($1, $3, sql_string, &@$);
       free($1);
+    }
+    | agg_func LBRACE RBRACE {
+      $$ = create_aggregate_expression($1, nullptr, sql_string, &@$);
+      free($1);
+    }
+    | agg_func LBRACE expression COMMA expression_list RBRACE {
+      $$ = create_aggregate_expression($1, $3, sql_string, &@$);
+      parse_success_ = false;
+      free($1);
+    }
+    ;
+
+agg_func:
+    SUM_STR { 
+      $$ = new char[4];
+      strcpy($$, "SUM");
+    }
+    | MIN_STR { 
+      $$ = new char[4];
+      strcpy($$, "MIN");
+    }
+    | MAX_STR { 
+      $$ = new char[4];
+      strcpy($$, "MAX");
+    }
+    | AVG_STR { 
+      $$ = new char[4];
+      strcpy($$, "AVG");
+    }
+    | COUNT_STR { 
+      $$ = new char[6];
+      strcpy($$, "COUNT");
     }
     ;
 

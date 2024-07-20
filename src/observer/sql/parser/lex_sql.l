@@ -84,6 +84,11 @@ QUOTE            [\'\"]
 
 ";"                                     RETURN_TOKEN(SEMICOLON);
 {DOT}                                   RETURN_TOKEN(DOT);
+SUM                                   RETURN_TOKEN(SUM_STR);
+MIN                                   RETURN_TOKEN(MIN_STR);
+MAX                                   RETURN_TOKEN(MAX_STR);
+AVG                                   RETURN_TOKEN(AVG_STR);
+COUNT                                 RETURN_TOKEN(COUNT_STR);
 LIKE                                    RETURN_TOKEN(LIKE_STR);
 "NOT LIKE"                              RETURN_TOKEN(NOT_LIKE_STR);
 EXIT                                    RETURN_TOKEN(EXIT);

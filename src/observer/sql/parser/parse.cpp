@@ -38,6 +38,7 @@ RC parse(const char *st, ParsedSqlResult *sql_result)
   parse_success_ = true;
   sql_parse(st, sql_result);
   if(!parse_success_) {
+    // std::cout << "syntax error" << std::endl;
     return RC::SQL_SYNTAX;
   }
   return RC::SUCCESS;

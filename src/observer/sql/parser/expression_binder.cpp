@@ -408,6 +408,8 @@ RC ExpressionBinder::bind_aggregate_expression(
     return RC::SUCCESS;
   }
 
+  bool found = false;
+
   auto unbound_aggregate_expr = static_cast<UnboundAggregateExpr *>(expr.get());
   const char *aggregate_name = unbound_aggregate_expr->aggregate_name();
   AggregateExpr::Type aggregate_type;
@@ -421,8 +423,8 @@ RC ExpressionBinder::bind_aggregate_expression(
   vector<unique_ptr<Expression>> child_bound_expressions;
 
   // corner cases:
-  // 1. child_expr is nullptr
-  if(child_expr->name() == nullptr) {
+  // 1. child_expr is nullptr, e.g., SUM() ...
+  if(child_expr == nullptr) {
     return RC::INVALID_ARGUMENT;
   }
   // 2. SUM(*) ...
@@ -430,7 +432,12 @@ RC ExpressionBinder::bind_aggregate_expression(
     return RC::INVALID_ARGUMENT;
   }   
 
+  if(child_expr->type() == ExprType::STAR) {
+    found = true;
+  }
+
   if (child_expr->type() == ExprType::STAR && aggregate_type == AggregateExpr::Type::COUNT) {
+    // change COUNT(*) to COUNT(1) ...
     ValueExpr *value_expr = new ValueExpr(Value(1));
     child_expr.reset(value_expr);
   } else {
@@ -450,16 +457,29 @@ RC ExpressionBinder::bind_aggregate_expression(
       child_expr.reset(child_bound_expressions[0].release());
     }
   }
-
   // 4. ERROR WITH NON-EXISTENT COLUMNS
-  
+  for(auto t : binder_context().query_tables()) {
+    for(auto fm : *t->table_meta().field_metas()) {
+      if(strcmp(fm.name(), child_expr->name()) == 0) {
+        found = true;
+        break;
+      }
+    }
+  }
+  if(!found) {
+    return RC::INVALID_ARGUMENT;
+  }
+
   auto aggregate_expr = make_unique<AggregateExpr>(aggregate_type, std::move(child_expr));
   aggregate_expr->set_name(unbound_aggregate_expr->name());
+    
   rc = check_aggregate_expression(*aggregate_expr);
   if (OB_FAIL(rc)) {
     return rc;
   }
 
   bound_expressions.emplace_back(std::move(aggregate_expr));
+
+  
   return RC::SUCCESS;
 }

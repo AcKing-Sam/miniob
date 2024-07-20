@@ -45,7 +45,7 @@ public:
   virtual ~ExpressionBinder() = default;
 
   RC bind_expression(std::unique_ptr<Expression> &expr, std::vector<std::unique_ptr<Expression>> &bound_expressions);
-
+  BinderContext& binder_context() { return context_; }
 private:
   RC bind_star_expression(
       std::unique_ptr<Expression> &star_expr, std::vector<std::unique_ptr<Expression>> &bound_expressions);
