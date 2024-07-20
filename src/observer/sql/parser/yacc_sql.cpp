@@ -668,7 +668,7 @@ static const yytype_int16 yyrline[] =
      299,   305,   313,   327,   337,   361,   364,   377,   385,   396,
      399,   400,   401,   402,   405,   422,   425,   436,   440,   444,
      454,   463,   466,   473,   485,   501,   526,   535,   540,   552,
-     555,   558,   561,   564,   568,   571,   576,   582,   585,   589,
+     555,   558,   561,   564,   568,   571,   576,   582,   585,   588,
      593,   601,   605,   609,   613,   617,   624,   629,   639,   644,
      649,   663,   666,   672,   675,   680,   687,   699,   711,   723,
      738,   739,   740,   741,   742,   743,   744,   745,   751,   754,
@@ -2247,15 +2247,15 @@ yyreduce:
 #line 585 "yacc_sql.y"
                                         {
       (yyval.expression) = create_aggregate_expression((yyvsp[-3].agg_func), (yyvsp[-1].expression), sql_string, &(yyloc));
-      free((yyvsp[-3].agg_func));
     }
-#line 2253 "yacc_sql.cpp"
+#line 2252 "yacc_sql.cpp"
     break;
 
   case 69: /* expression: agg_func LBRACE RBRACE  */
-#line 589 "yacc_sql.y"
+#line 588 "yacc_sql.y"
                              {
       (yyval.expression) = create_aggregate_expression((yyvsp[-2].agg_func), nullptr, sql_string, &(yyloc));
+      parse_success_ = false;
       free((yyvsp[-2].agg_func));
     }
 #line 2262 "yacc_sql.cpp"

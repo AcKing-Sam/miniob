@@ -584,7 +584,6 @@ expression:
     }
     | agg_func LBRACE expression RBRACE {
       $$ = create_aggregate_expression($1, $3, sql_string, &@$);
-      free($1);
     }
     | agg_func LBRACE RBRACE {
       $$ = create_aggregate_expression($1, nullptr, sql_string, &@$);
@@ -595,9 +594,6 @@ expression:
       $$ = create_aggregate_expression($1, $3, sql_string, &@$);
       parse_success_ = false;
       free($1);
-    }
-    | func LBRACE value RBRACE {
-
     }
     ;
 
