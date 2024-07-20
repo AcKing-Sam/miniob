@@ -52,7 +52,7 @@ RC UpdateStmt::create(Db *db, const UpdateSqlNode &update_sql, Stmt *&stmt)
   // check whether the column exists
   auto field_metas = *table->table_meta().field_metas();
   for(auto mt : field_metas) {
-    if(mt.name() == update_sql.attribute_name) {
+    if(strcmp(mt.name(), update_sql.attribute_name.data()) == 0) {
       found_column = true;
       break;
     }

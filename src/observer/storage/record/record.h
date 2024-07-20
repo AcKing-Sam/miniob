@@ -221,8 +221,19 @@ public:
       LOG_ERROR("invalid offset or length. offset=%d, length=%d, total length=%d", field_offset, field_len, len_);
       return RC::INVALID_ARGUMENT;
     }
-
+    
     memcpy(data_ + field_offset, data, field_len);
+    return RC::SUCCESS;
+  }
+
+  RC set_field_zero(int be, int st) {
+    if (!owner_) {
+      LOG_ERROR("cannot set field when record does not own the memory");
+      return RC::INTERNAL;
+    }
+    for(int i = be;i < st;i ++) {
+      data_[i] = '\0';
+    }
     return RC::SUCCESS;
   }
 

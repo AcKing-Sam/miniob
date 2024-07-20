@@ -43,7 +43,7 @@ RC UpdatePhysicalOperator::open(Trx *trx)
         table_->get_record(record.rid(), new_record);
         bool found = false;
         for(auto field : row_tuple->get_fields()) {
-            if(field->field_name() == attribute_name_) {
+            if(std::string(field->field_name()) == attribute_name_) {
                 found = true;
                 if(field->field().meta()->type() != value_->attr_type()) {
                   return RC::INVALID_ARGUMENT;
@@ -52,8 +52,16 @@ RC UpdatePhysicalOperator::open(Trx *trx)
                   if(value_->length() > field->field().meta()->len()) {
                     return RC::INVALID_ARGUMENT;
                   }
+                  // field 20 value 6
+                  if(value_->length() < field->field().meta()->len()) {
+                    rc = new_record.set_field(field->field().meta()->offset(), value_->length(), (char *)value_->data());
+                    rc = new_record.set_field_zero(field->field().meta()->offset() + value_->length(), field->field().meta()->offset() + field->field().meta()->len());
+                  } else {
+                    rc = new_record.set_field(field->field().meta()->offset(), field->field().meta()->len(), (char *)value_->data());
+                  }
+                } else {
+                  rc = new_record.set_field(field->field().meta()->offset(), field->field().meta()->len(), (char *)value_->data());
                 }
-                rc = new_record.set_field(field->field().meta()->offset(), field->field().meta()->len(), (char *)value_->data());
                 if (rc != RC::SUCCESS) {
                   LOG_TRACE("set record failed=%s", strrc(rc));
                   return rc;

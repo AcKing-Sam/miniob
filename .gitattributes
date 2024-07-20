@@ -1,0 +1,4 @@
+yacc_sql.cpp -diff
+lex_sql.cpp -diff
+*.result -diff
+a.txt -diff
