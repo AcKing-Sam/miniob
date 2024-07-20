@@ -494,6 +494,7 @@ update_stmt:      /*  update 语句的语法解析树*/
       }
       free($2);
       free($4);
+      delete($6);
     }
     ;
 select_stmt:        /*  select 语句的语法解析树*/
