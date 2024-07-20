@@ -596,6 +596,9 @@ expression:
       parse_success_ = false;
       free($1);
     }
+    | func LBRACE value RBRACE {
+
+    }
     ;
 
 agg_func:

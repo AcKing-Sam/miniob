@@ -170,21 +170,14 @@ RC AvgAggregator::evaluate(Value& result)
 }
 
 RC CountAggregator::accumulate(const Value &value)
-{
-  if (value_.attr_type() == AttrType::UNDEFINED) {
-    value_ = value;
-    return RC::SUCCESS;
-  }
-  
-  ASSERT(value.attr_type() == value_.attr_type(), "type mismatch. value type: %s, value_.type: %s", 
-        attr_type_to_string(value.attr_type()), attr_type_to_string(value_.attr_type()));
-  
+{  
   count_++;
   return RC::SUCCESS;
 }
 
 RC CountAggregator::evaluate(Value& result)
 {
+  result.set_type(AttrType::INTS);
   result.set_int(count_);
   return RC::SUCCESS;
 }

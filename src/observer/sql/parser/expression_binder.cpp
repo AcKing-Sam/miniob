@@ -402,8 +402,7 @@ RC check_aggregate_expression(AggregateExpr &expression)
 }
 
 RC ExpressionBinder::bind_aggregate_expression(
-    unique_ptr<Expression> &expr, vector<unique_ptr<Expression>> &bound_expressions)
-{
+    unique_ptr<Expression> &expr, vector<unique_ptr<Expression>> &bound_expressions) {
   if (nullptr == expr) {
     return RC::SUCCESS;
   }
@@ -412,6 +411,7 @@ RC ExpressionBinder::bind_aggregate_expression(
 
   auto unbound_aggregate_expr = static_cast<UnboundAggregateExpr *>(expr.get());
   const char *aggregate_name = unbound_aggregate_expr->aggregate_name();
+
   AggregateExpr::Type aggregate_type;
   RC rc = AggregateExpr::type_from_string(aggregate_name, aggregate_type);
   if (OB_FAIL(rc)) {
@@ -445,7 +445,7 @@ RC ExpressionBinder::bind_aggregate_expression(
     if (OB_FAIL(rc)) {
       return rc;
     }
-
+    
     // 3. ERROR WITH REDUNDANT COLUMNS
     // fixed below...
     if (child_bound_expressions.size() != 1) {
@@ -457,6 +457,7 @@ RC ExpressionBinder::bind_aggregate_expression(
       child_expr.reset(child_bound_expressions[0].release());
     }
   }
+
   // 4. ERROR WITH NON-EXISTENT COLUMNS
   for(auto t : binder_context().query_tables()) {
     for(auto fm : *t->table_meta().field_metas()) {
@@ -466,6 +467,7 @@ RC ExpressionBinder::bind_aggregate_expression(
       }
     }
   }
+
   if(!found) {
     return RC::INVALID_ARGUMENT;
   }
@@ -478,8 +480,6 @@ RC ExpressionBinder::bind_aggregate_expression(
     return rc;
   }
 
-  bound_expressions.emplace_back(std::move(aggregate_expr));
-
-  
+  bound_expressions.emplace_back(std::move(aggregate_expr));  
   return RC::SUCCESS;
 }
