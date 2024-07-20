@@ -78,7 +78,7 @@ public:
   RC insert_record(Record &record);
   RC delete_record(const Record &record);
   RC delete_record(const RID &rid);
-  RC update_record(Record &record, Record new_record);
+  RC update_record(Record &record, Record& new_record);
   RC get_record(const RID &rid, Record &record);
 
   RC destroy(const char* dir);

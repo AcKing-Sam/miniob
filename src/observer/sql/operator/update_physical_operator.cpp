@@ -46,12 +46,10 @@ RC UpdatePhysicalOperator::open(Trx *trx)
             if(field->field_name() == attribute_name_) {
                 found = true;
                 if(field->field().meta()->type() != value_->attr_type()) {
-                  // std::cout << "type mismatch!" << std::endl;
                   return RC::INVALID_ARGUMENT;
                 }
                 if(value_->attr_type() == AttrType::CHARS) {
                   if(value_->length() > field->field().meta()->len()) {
-                    // std::cout << "char type, length mismatch!" << std::endl;
                     return RC::INVALID_ARGUMENT;
                   }
                 }
@@ -72,7 +70,7 @@ RC UpdatePhysicalOperator::open(Trx *trx)
   // 记录的有效性由事务来保证，如果事务不保证删除的有效性，那说明此事务类型不支持并发控制，比如 VacuousTrx
   for (int i = 0;i < records_.size();i ++) {
     auto& record = records_[i];
-    auto new_record = new_records_[i];
+    auto& new_record = new_records_[i];
     rc = trx_->update_record(table_, record, new_record);
     if (rc != RC::SUCCESS) {
       LOG_WARN("failed to update record: %s", strrc(rc));

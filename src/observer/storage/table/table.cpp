@@ -250,7 +250,7 @@ RC Table::insert_record(Record &record)
 }
 
 // update record here
-RC Table::update_record(Record &record, Record new_record) {
+RC Table::update_record(Record &record, Record& new_record) {
   RC rc = RC::SUCCESS;
   // delete from file first
   // also delete from index

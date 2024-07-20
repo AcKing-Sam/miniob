@@ -148,8 +148,11 @@ RC MvccTrx::insert_record(Table *table, Record &record)
   return rc;
 }
 
-RC MvccTrx::update_record(Table *table, Record &record, Record new_record){
-  return RC::SUCCESS;
+RC MvccTrx::update_record(Table *table, Record &record, Record& new_record){
+  RC rc = RC::SUCCESS;
+  rc = delete_record(table, record);
+  rc = insert_record(table, new_record);
+  return rc;
 }
 
 RC MvccTrx::delete_record(Table *table, Record &record)
