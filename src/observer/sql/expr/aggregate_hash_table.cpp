@@ -262,7 +262,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   memset(inv, -1, sizeof(inv)); // Initialize inv to -1
   memset(off, 0, sizeof(off));  // Initialize off to 0
 
-  std::cout << "cap " << capacity_ << std::endl;
+  // std::cout << "cap " << capacity_ << std::endl;
 
   int i = 0;
   __m256i keys = _mm256_setzero_si256();
@@ -273,7 +273,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
   while (i + SIMD_WIDTH <= len) {
       for (int j = 0; j < SIMD_WIDTH; ++j) {
           if (inv[j] == -1 && i < len) {
-              std::cout << "insert pos " << j << " key: " << input_keys[i] << std::endl;
+              // std::cout << "insert pos " << j << " key: " << input_keys[i] << std::endl;
               keys = insert_value(keys, input_keys[i], j);
               values = insert_value(values, input_values[i], j);
               inv[j] = 0;
@@ -287,7 +287,7 @@ void LinearProbingAggregateHashTable<V>::add_batch(int *input_keys, V *input_val
         if(inv[j] != -1) {
           int key = mm256_extract_epi32_var_indx(keys, j);
           int hash_val = hash_function(key + off[j]);
-          std::cout << "cal hash vals, pos: " << j << " key: " << key << " hash val: " << hash_val << std::endl;
+          // std::cout << "cal hash vals, pos: " << j << " key: " << key << " hash val: " << hash_val << std::endl;
           hash_vals = insert_value(hash_vals, hash_val, j);
         }
       }

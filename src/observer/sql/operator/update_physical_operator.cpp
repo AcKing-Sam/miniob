@@ -53,7 +53,11 @@ RC UpdatePhysicalOperator::open(Trx *trx)
                     return RC::INVALID_ARGUMENT;
                   }
                 }
-                new_record.set_field(field->field().meta()->offset(), field->field().meta()->len(), (char *)value_->data());
+                rc = new_record.set_field(field->field().meta()->offset(), field->field().meta()->len(), (char *)value_->data());
+                if (rc != RC::SUCCESS) {
+                  LOG_TRACE("set record failed=%s", strrc(rc));
+                  return rc;
+                }
                 break;
             }
         }
