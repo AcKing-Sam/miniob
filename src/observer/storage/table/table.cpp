@@ -252,11 +252,10 @@ RC Table::insert_record(Record &record)
 // update record here
 RC Table::update_record(Record &record, Record& new_record) {
   RC rc = RC::SUCCESS;
-  // delete from file first
-  // also delete from index
+  // delete from file first, also delete from index
   rc = delete_record(record);
-  // insert the new record
-  // insert into index
+  if(OB_FAIL(rc)) return rc;
+  // insert the new record, also insert into index
   rc = insert_record(new_record);
   return rc;
 }

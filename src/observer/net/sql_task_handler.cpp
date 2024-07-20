@@ -34,8 +34,6 @@ RC SqlTaskHandler::handle_event(Communicator *communicator)
 
   SQLStageEvent sql_event(event, event->query());
 
-  sql_debug("sql: %s", event->query().data());
-
   rc = handle_sql(&sql_event);
   if (OB_FAIL(rc)) {
     LOG_TRACE("failed to handle sql. rc=%s", strrc(rc));
