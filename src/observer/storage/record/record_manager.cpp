@@ -523,27 +523,16 @@ RC PaxRecordPageHandler::get_record(const RID &rid, Record &record)
 }
 
 // TODO: specify the column_ids that chunk needed, currenly we get all columns.
-RC PaxRecordPageHandler::get_chunk(Chunk &chunk)
-{
+RC PaxRecordPageHandler::get_chunk(Chunk &chunk) {
   Bitmap bitmap(bitmap_, page_header_->record_capacity);
-  
   for(int i = 0;i < chunk.column_num();i ++) {
     int idx = chunk.column_ids(i);
     auto col = chunk.column_ptr(i);
-    
-    if(idx == 0) {
-      for(int j = 0;j < page_header_->record_capacity;j ++) {
-        if(bitmap.get_bit(j)) {
-          col->append_one(get_field_data(j, idx));
-        }
+    for(int j = 0;j < page_header_->record_capacity;j ++) {
+      if(bitmap.get_bit(j)) {
+        col->append_one(get_field_data(j, idx));
       }
-    } else {
-      for(int j = 0;j < page_header_->record_capacity;j ++) {
-        if(bitmap.get_bit(j)) {
-          col->append_one(get_field_data(j, idx));
-        }
-      }
-    } 
+    }
   }
   return RC::SUCCESS;
 }

@@ -46,7 +46,7 @@ RC NestedLoopJoinPhysicalOperator::next()
       if (rc == RC::RECORD_EOF) {
         left_need_step = true;
       } else {
-        return rc;
+        return rc;  
       }
     } else {
       return rc;  // got one tuple from right

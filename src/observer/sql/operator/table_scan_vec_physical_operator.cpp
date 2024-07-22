@@ -34,7 +34,6 @@ RC TableScanVecPhysicalOperator::open(Trx *trx)
 RC TableScanVecPhysicalOperator::next(Chunk &chunk)
 {
   RC rc = RC::SUCCESS;
-
   all_columns_.reset_data();
   filterd_columns_.reset_data();
   if (OB_SUCC(rc = chunk_scanner_.next_chunk(all_columns_))) {
@@ -60,7 +59,6 @@ RC TableScanVecPhysicalOperator::next(Chunk &chunk)
       chunk.reference(filterd_columns_);
     }
   }
-  // std::cout << "vec table scan: " << chunk.column_num() << std::endl;
   return rc;
 }
 

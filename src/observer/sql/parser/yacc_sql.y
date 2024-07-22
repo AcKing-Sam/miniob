@@ -521,6 +521,9 @@ select_stmt:        /*  select 语句的语法解析树*/
         delete $6;
       }
     }
+    | SELECT expression_list FROM join_list where {
+
+    }
     ;
 calc_stmt:
     CALC expression_list
@@ -530,6 +533,10 @@ calc_stmt:
       delete $2;
     }
     ;
+
+join_list:
+    relation COMMA rel_list INNER JOIN relation COMMA rel_list
+
 
 expression_list:
     expression
